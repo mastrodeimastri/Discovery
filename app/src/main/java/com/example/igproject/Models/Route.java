@@ -8,8 +8,8 @@ public class Route {
 
     @PrimaryKey
     @ColumnInfo(name = "routeId")
-    private Integer routeId;
+    public Integer routeId;
 
     @ColumnInfo(name = "routeName")
-    private String routeName;
+    public String routeName;
 }
