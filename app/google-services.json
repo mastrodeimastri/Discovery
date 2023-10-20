@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "792805086587",
+    "firebase_url": "https://ingegneria-del-software-370a0-default-rtdb.firebaseio.com",
+    "project_id": "ingegneria-del-software-370a0",
+    "storage_bucket": "ingegneria-del-software-370a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792805086587:android:4deaa8fa3082c4613959de",
+        "android_client_info": {
+          "package_name": "com.example.igproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsR6GihFcER_4NzNmHL86CCjcY52sEKxI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

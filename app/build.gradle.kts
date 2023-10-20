@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -32,6 +33,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-firestore:24.9.0")
     val room_version = "2.5.2"
     implementation("org.threeten:threetenbp:1.4.3")
     implementation("com.google.android.material:material:1.4.1")
