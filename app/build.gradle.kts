@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    val room_version = "2.5.2"
     implementation("org.threeten:threetenbp:1.4.3")
     implementation("com.google.android.material:material:1.4.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
