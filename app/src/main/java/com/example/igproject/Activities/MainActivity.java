@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.accounts.NetworkErrorException;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
+import android.view.View;
 
 import com.example.igproject.Fragments.WeatherFragment;
 import com.example.igproject.Fragments.NewsFragment;
@@ -14,15 +17,20 @@ import com.example.igproject.LocalData.MainActivityListener;
 import com.example.igproject.LocalData.WeatherData;
 import com.example.igproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.igproject.ViewModels.SettingsViewModel;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
     private WeatherData weatherData;
 
+
+    private SettingsViewModel viewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        viewModel = new SettingsViewModel(this);
 
         setContentView(R.layout.activity_main);
 

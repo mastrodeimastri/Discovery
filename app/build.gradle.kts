@@ -46,6 +46,10 @@ dependencies {
 
     val roomVersion = "2.5.2"
 
+    implementation("org.apache.commons:commons-csv:1.8")
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
 

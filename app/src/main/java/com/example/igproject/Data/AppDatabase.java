@@ -1,6 +1,9 @@
 package com.example.igproject.Data;
 
+import android.content.Context;
+
 import androidx.room.Database;
+import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
@@ -14,7 +17,7 @@ import com.example.igproject.Models.*;
 * Questa classe serve per andare a definire il database locale e metodi con i quali interagirci
 * */
 @TypeConverters(com.example.igproject.Models.TypeConverters.class)
-@Database(entities = {Route.class, Stop.class, StopTime.class, Trip.class}, version = 1)
+@Database(entities = {Route.class, Stop.class, StopTime.class, Trip.class}, version = 5)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract RouteDAO routeDAO();
@@ -24,4 +27,16 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract StopTimeDAO stopTimeDAO();
 
     public abstract TripDAO tripDAO();
+
+    private static AppDatabase instance;
+
+    public static synchronized AppDatabase getInstance(Context context) {
+        if (instance == null) {
+            instance = Room.databaseBuilder(context.getApplicationContext(),
+                            AppDatabase.class, "applicationDb")
+                    .fallbackToDestructiveMigration() // Puoi personalizzare questo comportamento
+                    .build();
+        }
+        return instance;
+    }
 }
