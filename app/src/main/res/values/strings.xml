@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">IGProject</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="loading">Caricamento...</string>
+    <string name="news_fragment">News</string>
+    <string name="city_name">Venezia</string>
 </resources>
