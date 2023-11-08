@@ -5,32 +5,32 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.accounts.NetworkErrorException;
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
-import android.view.View;
 
+import com.example.igproject.Fragments.MapsFragment;
 import com.example.igproject.Fragments.WeatherFragment;
 import com.example.igproject.Fragments.NewsFragment;
 import com.example.igproject.LocalData.MainActivityListener;
 import com.example.igproject.LocalData.WeatherData;
 import com.example.igproject.R;
+import com.example.igproject.ViewModels.MapViewModel;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.example.igproject.ViewModels.SettingsViewModel;
 
-import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
     private WeatherData weatherData;
 
 
-    private SettingsViewModel viewModel;
+
+    private MapViewModel mapViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        viewModel = new SettingsViewModel(this);
+        mapViewModel = new MapViewModel(this);
 
         setContentView(R.layout.activity_main);
 
@@ -54,11 +54,17 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
 
     //Change the current fragment based on menu input or update
     public void replaceFragment(int id){
+
         if (id == R.id.news)
             loadFragment(new NewsFragment());
         else if (id == R.id.weather){
             WeatherFragment weatherFragment = WeatherFragment.newInstance(weatherData);
             loadFragment(weatherFragment);
+        } else if (id == R.id.map) {
+            // Caricamento frammento pagina navigazione
+            loadFragment(new MapsFragment(mapViewModel));
+        } else {
+            //caricamentp pagina profilo
         }
     }
 

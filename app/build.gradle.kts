@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -34,6 +35,7 @@ android {
 
 dependencies {
     implementation("com.google.firebase:firebase-firestore:24.9.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
     val room_version = "2.5.2"
     implementation("org.threeten:threetenbp:1.4.3")
     implementation("com.google.android.material:material:1.4.1")
@@ -52,6 +54,8 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-runtime:$roomVersion")
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
+
+    implementation("org.osmdroid:osmdroid-android:6.1.17")
 
     /*// To use Kotlin annotation processing tool (kapt)
     implementation("androidx.room:room-compiler:$roomVersion")

@@ -1,21 +1,14 @@
 package com.example.igproject.Models;
 
-import android.provider.ContactsContract;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
 import com.example.igproject.Utils.DateConverter;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.sql.Date;
-
-import kotlin.jvm.internal.Ref;
 
 @Entity(tableName = "Stop Times", foreignKeys = {
         @ForeignKey(entity = Stop.class,

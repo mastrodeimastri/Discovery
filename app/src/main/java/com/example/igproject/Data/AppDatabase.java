@@ -9,6 +9,7 @@ import androidx.room.TypeConverters;
 
 import com.example.igproject.DAO.RouteDAO;
 import com.example.igproject.DAO.StopDAO;
+import com.example.igproject.DAO.StopGroupDAO;
 import com.example.igproject.DAO.StopTimeDAO;
 import com.example.igproject.DAO.TripDAO;
 import com.example.igproject.Models.*;
@@ -17,7 +18,7 @@ import com.example.igproject.Models.*;
 * Questa classe serve per andare a definire il database locale e metodi con i quali interagirci
 * */
 @TypeConverters(com.example.igproject.Models.TypeConverters.class)
-@Database(entities = {Route.class, Stop.class, StopTime.class, Trip.class}, version = 5)
+@Database(entities = {Route.class, Stop.class, StopTime.class, StopGroup.class,Trip.class}, version = 6)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract RouteDAO routeDAO();
@@ -28,6 +29,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract TripDAO tripDAO();
 
+    public abstract StopGroupDAO stopGroupDAO();
+
     private static AppDatabase instance;
 
     public static synchronized AppDatabase getInstance(Context context) {
@@ -37,6 +40,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     .fallbackToDestructiveMigration() // Puoi personalizzare questo comportamento
                     .build();
         }
+
         return instance;
     }
 }

@@ -1,6 +1,5 @@
 package com.example.igproject.ViewModels;
 
-import android.accounts.NetworkErrorException;
 import android.content.Context;
 
 import androidx.lifecycle.ViewModel;
@@ -8,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.igproject.Data.AppDatabase;
 import com.example.igproject.Models.Route;
 import com.example.igproject.Models.Stop;
+import com.example.igproject.Models.StopGroup;
 import com.example.igproject.Models.StopTime;
 import com.example.igproject.Models.Trip;
 
@@ -15,23 +15,16 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpRetryException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class SettingsViewModel extends ViewModel{
+public class MapViewModel extends ViewModel{
 
     private static final String _targetUrl = "https://actv.avmspa.it/sites/default/files/attachments/opendata/navigazione/actv_nav.zip";
     private static final String _fileName = "actv_nav.zip";
@@ -39,11 +32,14 @@ public class SettingsViewModel extends ViewModel{
 
     private static AppDatabase db;
 
-    public SettingsViewModel(Context context) {
+    public MapViewModel(Context context) {
+
         db = AppDatabase.getInstance(context);
+
+
     }
 
-    public void parseData() throws NetworkErrorException {
+    private void parseData() {
 
         BufferedReader reader;
         String line;
@@ -57,14 +53,14 @@ public class SettingsViewModel extends ViewModel{
 
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(10000);
+            connection.setConnectTimeout(Integer.MAX_VALUE);
             connection.connect();
 
             int status = connection.getResponseCode();
 
             if(status > 299){
                 // qua vado a gestire il caso in cui ricevo un errore dall'endpoint
-                throw new NetworkErrorException("La connessione all'endpoint non è andata a buon fine");
+                throw new RuntimeException("La connessione all'endpoint non è andata a buon fine");
 
             } else {
 
@@ -75,15 +71,14 @@ public class SettingsViewModel extends ViewModel{
                 db.clearAllTables();
 
                 ZipEntry entry;
-
                 // qua vado a parsare tutti le entry
                 while((entry = zipInputStream.getNextEntry()) != null) {
-                    db.beginTransaction();
+
                     CSVParser csv = CSVFormat.DEFAULT.parse(new InputStreamReader(zipInputStream));
                     Integer counter = 0;
-                    for(CSVRecord record : csv) {
-                        if(counter > 0) {
-                            switch (entry.getName()){
+                    for (CSVRecord record : csv) {
+                        if (counter > 0) {
+                            switch (entry.getName()) {
                                 case "routes.txt":
                                     db.routeDAO().insert(new Route(
                                             record.get(0),
@@ -99,12 +94,26 @@ public class SettingsViewModel extends ViewModel{
                                     );
                                     break;
                                 case "stops.txt":
+
+                                    String stopGroupName = record.get(2).replaceAll("\"(.*?)\"","");
+                                    String stopLat = record.get(4);
+                                    String stopLon = record.get(5);
+                                    StopGroup sG = db.stopGroupDAO().getEntity(stopGroupName);
+
+                                    if(sG == null) {
+                                        sG = new StopGroup(stopGroupName, stopLat, stopLon);
+                                        db.stopGroupDAO().insert(sG);
+                                    }
+
                                     db.stopDAO().insert(new Stop(
                                             record.get(0),
                                             record.get(2),
-                                            record.get(4),
-                                            record.get(5)
+                                            stopLat,
+                                            stopLon,
+                                            stopGroupName
                                     ));
+
+
                                     break;
                                 case "stop_times.txt":
                                     db.stopTimeDAO().insert(new StopTime(
@@ -125,15 +134,23 @@ public class SettingsViewModel extends ViewModel{
                     // chiudo l'entry appena parsata
                     zipInputStream.closeEntry();
                 }
-                db.endTransaction();
+
                 // devo chiudere l'ultima entry
                 zipInputStream.closeEntry();
                 zipInputStream.close();
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 
+    public void importData(){
+        db.runInTransaction(() -> {parseData();});
+    }
+
+    public List<StopGroup> renderStops() {
+
+        return db.stopGroupDAO().getAll();
+    }
 }

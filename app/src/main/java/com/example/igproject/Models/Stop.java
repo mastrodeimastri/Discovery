@@ -26,13 +26,17 @@ public class Stop {
     @NotNull
     public String stopLon;
 
+    @NotNull
+    public String stopGroupName;
+
     public Stop(){}
 
-    public Stop(String sId, String sN, String sLat, String sLon){
+    public Stop(String sId, String sN, String sLat, String sLon, String sGN){
         this.stopId = Integer.parseInt(sId);
         this.stopName = sN;
         this.stopLat = sLat;
         this.stopLon = sLon;
+        this.stopGroupName = sGN;
     }
 
 }
