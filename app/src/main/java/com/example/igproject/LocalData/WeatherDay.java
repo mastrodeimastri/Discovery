@@ -9,7 +9,9 @@ import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.TextStyle;
 import java.util.Locale;
+import java.util.Objects;
 
+//Parcelable to communicate weather data with weather fragment
 public class WeatherDay implements Parcelable {
     public int minTemp, maxTemp;
     public LocalDate date;
@@ -20,6 +22,8 @@ public class WeatherDay implements Parcelable {
 
     public WeatherDay(LocalDateTime[] time, int[] temperature, double[] precipitation, int[] cloudCover,
                       int[] isDay, double[] windSpeed){
+        //Getting relevant data about today
+        //dayOfWeek gets the actual name of the day in the local device language
         date = time[0].toLocalDate();
         dayOfWeek = time[0].getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
         dayOfWeek = dayOfWeek.substring(0, 1).toUpperCase() + dayOfWeek.substring(1);
@@ -33,6 +37,7 @@ public class WeatherDay implements Parcelable {
                 maxTemp = temperature[i];
         }
 
+        //Algorithm to decide today's weather
         double totPrecipitation = 0, totCloudCover = 0;
         boolean snow = false;
         for (int i = 0; i < time.length; ++i){
@@ -44,7 +49,9 @@ public class WeatherDay implements Parcelable {
         }
         totCloudCover = totCloudCover / time.length;
         weather = Weather.SUN;
-        if (totCloudCover > 50)
+        if (totCloudCover > 40)
+            weather = Weather.PARTIAL_CLOUDS;
+        if (totCloudCover > 80)
             weather = Weather.CLOUDS;
         if (totPrecipitation > 1){
             weather = Weather.RAIN;
@@ -54,6 +61,7 @@ public class WeatherDay implements Parcelable {
                 weather = Weather.SNOW;
         }
 
+        //Create all the weatherHour objects for this day
         weatherHours = new WeatherHour[time.length];
         for (int i = 0; i < weatherHours.length; ++i){
             weatherHours[i] = new WeatherHour(
@@ -62,15 +70,17 @@ public class WeatherDay implements Parcelable {
         }
     }
 
+    //Parcelable constructor to send an object of this class to other fragments or activities
     protected WeatherDay(Parcel in) {
         minTemp = in.readInt();
         maxTemp = in.readInt();
-        date = LocalDate.parse(in.readString()); // Convert the String back to LocalDate
+        date = LocalDate.parse(Objects.requireNonNull(in.readString())); // Convert the String back to LocalDate
         dayOfWeek = in.readString();
         weather = Weather.values()[in.readInt()]; // Convert the int back to enum
         weatherHours = in.createTypedArray(WeatherHour.CREATOR);
     }
 
+    //Parcelable function to send an object of this class to other fragments or activities
     public static final Creator<WeatherDay> CREATOR = new Creator<WeatherDay>() {
         @Override
         public WeatherDay createFromParcel(Parcel in) {
@@ -83,17 +93,13 @@ public class WeatherDay implements Parcelable {
         }
     };
 
-    @NonNull
-    @Override
-    public String toString(){
-        return "Min: " + minTemp + " Max: " + maxTemp + " Date: " + date.toString() + " Day: " + dayOfWeek + "Weather: " + weather.name();
-    }
-
+    //Parcelable function to send an object of this class to other fragments or activities
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //Parcelable function to send an object of this class to other fragments or activities
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int flags) {
         parcel.writeInt(minTemp);
@@ -104,14 +110,22 @@ public class WeatherDay implements Parcelable {
         parcel.writeTypedArray(weatherHours, flags);
     }
 
+    //Function for debug, unused
+    @NonNull
+    @Override
+    public String toString(){
+        return "Min: " + minTemp + " Max: " + maxTemp + " Date: " + date.toString() + " Day: " + dayOfWeek + "Weather: " + weather.name();
+    }
+
     public String getMinTemp() {
-        return String.valueOf(minTemp) + "°";
+        return minTemp + "°";
     }
 
     public String getMaxTemp() {
-        return String.valueOf(maxTemp) + "°";
+        return maxTemp + "°";
     }
 
+    //Date getter to display today's date on screen, ignores the year
     public String getDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
         return date.format(formatter);

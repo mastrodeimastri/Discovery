@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
 
+import java.util.Objects;
+
 public class WeatherHour implements Parcelable {
     public LocalTime time;
     public int temp;
@@ -17,16 +19,20 @@ public class WeatherHour implements Parcelable {
 
     public WeatherHour(LocalDateTime time, int temperature, double precipitation, int cloudCover,
                        int isDay, double windSpeed){
+        //Getting relevant data about the hour
         this.time = time.toLocalTime();
         temp = temperature;
         this.windSpeed = windSpeed;
         mmRain = precipitation;
         this.isDay = isDay != 0;
 
+        //Algorithm to decide this hour's weather
         weather = Weather.SUN;
         if (!this.isDay)
             weather = Weather.NIGHT;
-        if (cloudCover > 50)
+        if (cloudCover > 40)
+            weather = Weather.PARTIAL_CLOUDS;
+        if (cloudCover > 80)
             weather = Weather.CLOUDS;
         if (precipitation > 0.1){
             weather = Weather.RAIN;
@@ -37,8 +43,9 @@ public class WeatherHour implements Parcelable {
         }
     }
 
+    //Parcelable constructor to send an object of this class to other fragments or activities
     protected WeatherHour(Parcel in) {
-        time = LocalTime.parse(in.readString()); // Convert the String back to LocalDate
+        time = LocalTime.parse(Objects.requireNonNull(in.readString())); // Convert the String back to LocalDate
         temp = in.readInt();
         weather = Weather.values()[in.readInt()]; // Convert the int back to enum
         isDay = in.readByte() != 0;
@@ -46,6 +53,7 @@ public class WeatherHour implements Parcelable {
         windSpeed = in.readDouble();
     }
 
+    //Parcelable function to send an object of this class to other fragments or activities
     public static final Creator<WeatherHour> CREATOR = new Creator<WeatherHour>() {
         @Override
         public WeatherHour createFromParcel(Parcel in) {
@@ -58,17 +66,13 @@ public class WeatherHour implements Parcelable {
         }
     };
 
-    @NonNull
-    @Override
-    public String toString(){
-        return "Time: " + time + " Temp: " + temp + " Weather: " + weather.name() + (isDay ? "Day" : "Night") + " Rain: " + mmRain + " Wind: " + windSpeed;
-    }
-
+    //Parcelable function to send an object of this class to other fragments or activities
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //Parcelable function to send an object of this class to other fragments or activities
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
         parcel.writeString(time.toString()); // Convert LocalDate to a String
@@ -79,20 +83,28 @@ public class WeatherHour implements Parcelable {
         parcel.writeDouble(windSpeed);
     }
 
+    //Function for debug, unused
+    @NonNull
+    @Override
+    public String toString(){
+        return "Time: " + time + " Temp: " + temp + " Weather: " + weather.name() + (isDay ? "Day" : "Night") + " Rain: " + mmRain + " Wind: " + windSpeed;
+    }
+
+    //Gets this hour time in the format HH:mm, mm is always '00'
     public String getTimeAsString() {
         return time.toString();
     }
 
     public String getTempAsString() {
-        return String.valueOf(temp) + "°";
+        return temp + "°";
     }
 
     public String getMmRainAsString() {
-        return String.valueOf(mmRain) + "mm";
+        return mmRain + "mm";
     }
 
     public String getWindSpeedAsString() {
-        return String.valueOf(windSpeed) + "km/h";
+        return windSpeed + "km/h";
     }
 
 

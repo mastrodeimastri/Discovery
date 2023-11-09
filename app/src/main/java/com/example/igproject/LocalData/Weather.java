@@ -1,5 +1,5 @@
 package com.example.igproject.LocalData;
 
 public enum Weather {
-    SUN, NIGHT, CLOUDS, RAIN, HEAVY_RAIN, SNOW
+    SUN, NIGHT, PARTIAL_CLOUDS, CLOUDS, RAIN, HEAVY_RAIN, SNOW
 }

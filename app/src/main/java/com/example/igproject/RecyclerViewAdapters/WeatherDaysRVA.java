@@ -16,10 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.igproject.LocalData.WeatherDay;
 import com.example.igproject.R;
 
+//Adapter for recyclerview to display clickable list with general weather info about every day
 public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHolder> {
     private final Context context;
-    private WeatherDay[] weatherDays;
-    private OnDayListener mOnDayListener;
+    private final WeatherDay[] weatherDays;
+    //'mOnDayListener' exists only to be passed to the view holder
+    private final OnDayListener mOnDayListener;
+    //This is the last clicked item in the view
     protected int selectedPosition = 0;
 
     public WeatherDaysRVA(Context context, WeatherDay[] weatherDays, OnDayListener onDayListener){
@@ -28,12 +31,16 @@ public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHo
         this.mOnDayListener = onDayListener;
     }
 
+    //Called by the OnDayListener when an item is clicked
     public void updateSelectedPos(int selectedPosition){
+        //Both the last clicked item and the clicked item are reloaded to change their background
+        // color accordingly and show which one is selected
         notifyItemChanged(this.selectedPosition);
         this.selectedPosition = selectedPosition;
         notifyItemChanged(selectedPosition);
     }
 
+    //Sets the view holder
     @NonNull
     @Override
     public WeatherDaysRVA.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,6 +49,7 @@ public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHo
         return new WeatherDaysRVA.MyViewHolder(view, mOnDayListener);
     }
 
+    //Loads the item at the given position by modifying its views
     @Override
     public void onBindViewHolder(@NonNull WeatherDaysRVA.MyViewHolder holder, int position) {
         if (position == selectedPosition)
@@ -56,16 +64,20 @@ public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHo
         holder.image.setImageResource(getWeatherImage(weatherDays[position].weather));
     }
 
+    //Returns how many items are in the recyclerview
     @Override
     public int getItemCount() {
         return weatherDays.length;
     }
 
+    //Holder that stores all the views of every item in the layout,
+    // has a click listener to get which item was clicked
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView image;
         TextView day, tempMin, tempMax, date;
         CardView cardView;
+        //Listener that is notified when an item is clicked
         OnDayListener onDayListener;
 
         public MyViewHolder(@NonNull View itemView, OnDayListener onDayListener) {
@@ -79,15 +91,18 @@ public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHo
             date = itemView.findViewById(R.id.textDateDay);
             this.onDayListener = onDayListener;
 
+            //'this' here is the WeatherDaysRVA object, not the holder
             itemView.setOnClickListener(this);
         }
 
+        //When an item gets clicked notify the listener to act accordingly
         @Override
         public void onClick(View view) {
             onDayListener.onDayClick(getAdapterPosition());
         }
     }
 
+    //Listener interface, its here for convenience
     public interface OnDayListener{
         void onDayClick(int position);
     }
