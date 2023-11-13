@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.igproject.LocalData.Weather;
 import com.example.igproject.LocalData.WeatherData;
 import com.example.igproject.R;
+import com.example.igproject.RecyclerViewAdapters.OnClickRVAListener;
 import com.example.igproject.RecyclerViewAdapters.WeatherDaysRVA;
 import com.example.igproject.RecyclerViewAdapters.WeatherHoursRVA;
 
@@ -23,7 +24,7 @@ import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
-public class WeatherFragment extends Fragment implements WeatherDaysRVA.OnDayListener {
+public class WeatherFragment extends Fragment implements OnClickRVAListener {
 
     private static final String ARG_WEATHER = "weatherData";
     private WeatherData weatherData;
@@ -119,8 +120,10 @@ public class WeatherFragment extends Fragment implements WeatherDaysRVA.OnDayLis
                 return R.drawable.moon;
             case CLOUDS:
                 return R.drawable.clouds;
-            case PARTIAL_CLOUDS:
+            case PARTIAL_CLOUDS_SUN:
                 return R.drawable.clouds_sun;
+            case PARTIAL_CLOUDS_MOON:
+                return R.drawable.clouds_moon;
             case RAIN:
                 return R.drawable.rain;
             case HEAVY_RAIN:
@@ -185,7 +188,7 @@ public class WeatherFragment extends Fragment implements WeatherDaysRVA.OnDayLis
     //Implemented from WeatherDaysRVA.OnDayListener interface, to give the RVA (recyclerview adaptors)
     // access to the weatherData every time a click could require the lists to change displayed info
     @Override
-    public void onDayClick(int position) {
+    public void onClick(int position) {
         //Changes what day's hourly info is currently being displayed based on the array pos of the item clicked
         weatherHoursRVA.updateData(weatherData.weatherDays[position].weatherHours);
         weatherDaysRVA.updateSelectedPos(position);

@@ -30,8 +30,12 @@ public class WeatherHour implements Parcelable {
         weather = Weather.SUN;
         if (!this.isDay)
             weather = Weather.NIGHT;
-        if (cloudCover > 40)
-            weather = Weather.PARTIAL_CLOUDS;
+        if (cloudCover > 40){
+            if (this.isDay)
+                weather = Weather.PARTIAL_CLOUDS_SUN;
+            else
+                weather = Weather.PARTIAL_CLOUDS_MOON;
+        }
         if (cloudCover > 80)
             weather = Weather.CLOUDS;
         if (precipitation > 0.1){

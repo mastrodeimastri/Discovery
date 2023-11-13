@@ -21,22 +21,23 @@ public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHo
     private final Context context;
     private final WeatherDay[] weatherDays;
     //'mOnDayListener' exists only to be passed to the view holder
-    private final OnDayListener mOnDayListener;
+    private final OnClickRVAListener mOnClickRVAListener;
     //This is the last clicked item in the view
-    protected int selectedPosition = 0;
+    private int selectedPosition = 0;
 
-    public WeatherDaysRVA(Context context, WeatherDay[] weatherDays, OnDayListener onDayListener){
+    public WeatherDaysRVA(Context context, WeatherDay[] weatherDays, OnClickRVAListener onClickRVAListener){
         this.context = context;
         this.weatherDays = weatherDays;
-        this.mOnDayListener = onDayListener;
+        this.mOnClickRVAListener = onClickRVAListener;
     }
 
-    //Called by the OnDayListener when an item is clicked
+    //Called by the OnClickRVAListener when an item is clicked
     public void updateSelectedPos(int selectedPosition){
         //Both the last clicked item and the clicked item are reloaded to change their background
         // color accordingly and show which one is selected
-        notifyItemChanged(this.selectedPosition);
+        int oldSelectedPosition = this.selectedPosition;
         this.selectedPosition = selectedPosition;
+        notifyItemChanged(oldSelectedPosition);
         notifyItemChanged(selectedPosition);
     }
 
@@ -46,7 +47,7 @@ public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHo
     public WeatherDaysRVA.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.recyclerview_weather_days, parent, false);
-        return new WeatherDaysRVA.MyViewHolder(view, mOnDayListener);
+        return new WeatherDaysRVA.MyViewHolder(view, mOnClickRVAListener);
     }
 
     //Loads the item at the given position by modifying its views
@@ -78,9 +79,9 @@ public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHo
         TextView day, tempMin, tempMax, date;
         CardView cardView;
         //Listener that is notified when an item is clicked
-        OnDayListener onDayListener;
+        OnClickRVAListener onClickRVAListener;
 
-        public MyViewHolder(@NonNull View itemView, OnDayListener onDayListener) {
+        public MyViewHolder(@NonNull View itemView, OnClickRVAListener onClickRVAListener) {
             super(itemView);
 
             cardView = itemView.findViewById(R.id.cardViewDay);
@@ -89,7 +90,7 @@ public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHo
             tempMin = itemView.findViewById(R.id.textTempMinDay);
             tempMax = itemView.findViewById(R.id.textTempMaxDay);
             date = itemView.findViewById(R.id.textDateDay);
-            this.onDayListener = onDayListener;
+            this.onClickRVAListener = onClickRVAListener;
 
             //'this' here is the WeatherDaysRVA object, not the holder
             itemView.setOnClickListener(this);
@@ -98,12 +99,7 @@ public class WeatherDaysRVA extends RecyclerView.Adapter<WeatherDaysRVA.MyViewHo
         //When an item gets clicked notify the listener to act accordingly
         @Override
         public void onClick(View view) {
-            onDayListener.onDayClick(getAdapterPosition());
+            onClickRVAListener.onClick(getAdapterPosition());
         }
-    }
-
-    //Listener interface, its here for convenience
-    public interface OnDayListener{
-        void onDayClick(int position);
     }
 }

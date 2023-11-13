@@ -41,21 +41,23 @@ public class WeatherDay implements Parcelable {
         double totPrecipitation = 0, totCloudCover = 0;
         boolean snow = false;
         for (int i = 0; i < time.length; ++i){
-            totPrecipitation += precipitation[i];
-            totCloudCover += cloudCover[i];
+            if (i > 5 && i <= 23){
+                totPrecipitation += precipitation[i];
+                totCloudCover += cloudCover[i];
+            }
 
             if (precipitation[i] > 0.2 && temperature[i] < 0)
                 snow = true;
         }
-        totCloudCover = totCloudCover / time.length;
+        totCloudCover = totCloudCover / ( time.length - (time.length - 23) - 5 );
         weather = Weather.SUN;
         if (totCloudCover > 40)
-            weather = Weather.PARTIAL_CLOUDS;
+            weather = Weather.PARTIAL_CLOUDS_SUN;
         if (totCloudCover > 80)
             weather = Weather.CLOUDS;
-        if (totPrecipitation > 1){
+        if (totPrecipitation > 0.8){
             weather = Weather.RAIN;
-            if (totPrecipitation > 10)
+            if (totPrecipitation > 8)
                 weather = Weather.HEAVY_RAIN;
             if (snow)
                 weather = Weather.SNOW;

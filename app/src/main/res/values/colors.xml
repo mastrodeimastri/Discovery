@@ -8,5 +8,11 @@
     <color name="bluish_black">#000033</color>
     <color name="blue">#1955A5</color>
     <color name="red">#C10800</color>
+    <color name="orange">#E38800</color>
+    <color name="old_orange">#D86500</color>
+    <color name="yellow">#F1C900</color>
+    <color name="old_yellow">#F1BD02</color>
+    <color name="green">#4FCD00</color>
     <color name="text_white">#EEEEEE</color>
+
 </resources>

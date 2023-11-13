@@ -2,6 +2,11 @@
     <string name="app_name">IGProject</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="loading">Caricamento...</string>
-    <string name="news_fragment">News</string>
+    <string name="news_fragment">News:</string>
     <string name="city_name">Venezia</string>
+    <string name="_8am">8am</string>
+    <string name="_12am">12am</string>
+    <string name="_4pm">4pm</string>
+    <string name="_8pm">8pm</string>
+    <string name="attendanceIntroduction">Quanto è affollata Venezia questa settimana?</string>
 </resources>
