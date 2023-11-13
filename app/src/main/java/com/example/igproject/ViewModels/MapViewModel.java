@@ -138,6 +138,7 @@ public class MapViewModel extends ViewModel{
                 // devo chiudere l'ultima entry
                 zipInputStream.closeEntry();
                 zipInputStream.close();
+                db.flag = 1;
             }
 
         } catch (IOException e) {
@@ -146,11 +147,18 @@ public class MapViewModel extends ViewModel{
     }
 
     public void importData(){
-        db.runInTransaction(() -> {parseData();});
+        db.runInTransaction(() -> {
+            parseData();
+        });
     }
 
     public List<StopGroup> renderStops() {
 
+        if(db.flag == 0) {
+            importData();
+        }
+
         return db.stopGroupDAO().getAll();
     }
+
 }

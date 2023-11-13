@@ -10,6 +10,7 @@ import android.os.HandlerThread;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
 
 import com.example.igproject.Models.Stop;
 import com.example.igproject.Models.StopGroup;
@@ -76,19 +77,30 @@ public class MapsFragment extends Fragment {
                     stops.add(stop);
                 }
                 mainHandler.post(() -> {
-                    renderStops(googleMap);
+                    renderMarkers(googleMap);
                 });
 
             });
         }
-
-        private void renderStops(GoogleMap googleMap) {
+        private void renderMarkers(GoogleMap googleMap) {
             for (StopGroup s: stops) {
                 LatLng stopPos = new LatLng(Double.parseDouble(s.stopLat), Double.parseDouble(s.stopLon));
                 googleMap.addMarker(new MarkerOptions().position(stopPos).title(s.stopGroupName));
             }
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(45.43713, 12.33265)));
+            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(@NonNull Marker marker) {
+
+                    return false;
+                }
+            });
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.43713, 12.33265), 16));
         }
+//        public void refresh(View view){
+//            Handler bgHandler = new Handler(handlerThread.getLooper());
+//            bgHandler.post(() -> {_viewModel.importData();});
+//        }
+        
     };
 
     @Nullable

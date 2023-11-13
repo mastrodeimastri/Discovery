@@ -31,6 +31,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract StopGroupDAO stopGroupDAO();
 
+    public static Integer flag = 0;
+
     private static AppDatabase instance;
 
     public static synchronized AppDatabase getInstance(Context context) {
@@ -39,6 +41,10 @@ public abstract class AppDatabase extends RoomDatabase {
                             AppDatabase.class, "applicationDb")
                     .fallbackToDestructiveMigration() // Puoi personalizzare questo comportamento
                     .build();
+
+            if(context.getDatabasePath("applicationDb").exists()){
+                flag = 1;
+            }
         }
 
         return instance;

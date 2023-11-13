@@ -87,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 if (getSupportFragmentManager().findFragmentById(R.id.frameLayout) instanceof NewsFragment)
                     replaceFragment(R.id.news);
                 break;
+            case "map":
+                if (getSupportFragmentManager().findFragmentById(R.id.frameLayout) instanceof MapsFragment)
+                    replaceFragment(R.id.map);
+                break;
         }
     }
 }
