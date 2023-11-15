@@ -1,10 +1,14 @@
 package com.example.igproject.ViewModels;
 
 import android.content.Context;
+import android.icu.text.DateFormat;
+import android.icu.text.SimpleDateFormat;
 
 import androidx.lifecycle.ViewModel;
 
 import com.example.igproject.Data.AppDatabase;
+import com.example.igproject.Models.Calendar;
+import com.example.igproject.Models.CalendarDates;
 import com.example.igproject.Models.Route;
 import com.example.igproject.Models.Stop;
 import com.example.igproject.Models.StopGroup;
@@ -20,9 +24,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.time.Instant;
+import java.time.temporal.TemporalAccessor;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import kotlin.text.Regex;
 
 public class MapViewModel extends ViewModel{
 
@@ -30,13 +41,12 @@ public class MapViewModel extends ViewModel{
     private static final String _fileName = "actv_nav.zip";
     private static HttpURLConnection connection;
 
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+
     private static AppDatabase db;
 
     public MapViewModel(Context context) {
-
         db = AppDatabase.getInstance(context);
-
-
     }
 
     private void parseData() {
@@ -53,6 +63,7 @@ public class MapViewModel extends ViewModel{
 
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
+            // TODO: cambiare il tempo di timeout
             connection.setConnectTimeout(Integer.MAX_VALUE);
             connection.connect();
 
@@ -90,14 +101,35 @@ public class MapViewModel extends ViewModel{
                                 case "trips.txt":
                                     db.tripDAO().insert(new Trip(
                                             record.get(0),
-                                            record.get(2))
+                                            record.get(2),
+                                            record.get(1))
                                     );
+                                    break;
+                                case "calendar.txt":
+                                    db.calendarDAO().insert(new Calendar(
+                                            record.get(0),
+                                            record.get(1),
+                                            record.get(2),
+                                            record.get(3),
+                                            record.get(4),
+                                            record.get(5),
+                                            record.get(6),
+                                            record.get(7),
+                                            record.get(8),
+                                            record.get(9)
+                                    ));
+                                    break;
+                                case "calendar_dates.txt":
+                                    db.calendarDatesDAO().insert(new CalendarDates(
+                                            record.get(0),
+                                            record.get(1)));
                                     break;
                                 case "stops.txt":
 
                                     String stopGroupName = record.get(2).replaceAll("\"(.*?)\"","");
                                     String stopLat = record.get(4);
                                     String stopLon = record.get(5);
+
                                     StopGroup sG = db.stopGroupDAO().getEntity(stopGroupName);
 
                                     if(sG == null) {
@@ -153,12 +185,71 @@ public class MapViewModel extends ViewModel{
     }
 
     public List<StopGroup> renderStops() {
+         try {
 
-        if(db.flag == 0) {
-            importData();
+            Date endDate = dateFormat.parse(String.valueOf(db.calendarDAO().getEndDate().get(0)));
+            Date today = Date.from(Instant.now());
+
+            // controllo se il db è 'brand new' o se i dati sono scaduti
+            if(db.flag == 0 || endDate.compareTo(today) < 0) {
+                // importo i dati aggiornati
+                importData();
+            }
+
+            return db.stopGroupDAO().getAll();
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
-
-        return db.stopGroupDAO().getAll();
     }
 
+    public List<StopTime> getStops(String groupName, Date date){
+
+        // TODO: prendersi i servizi attivi in quel giorno
+
+        List<String> services = new ArrayList<>();
+
+        if(isSpecialDate(date)){
+            // ottengo i servizi relativi al giorno speciale in input
+            services = db.calendarDatesDAO().getServices(Integer.parseInt(dateFormat.format(date)));
+        } else {
+            // TODO: completare switch per filtraggio dei servizi a seconda del giorno in input
+            switch(date.getDay()){
+                case 1:
+
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+            }
+            //services = db.calendarDAO().getServices(date);
+        }
+
+        return db.stopTimeDAO().getDepartures(groupName, services);
+    }
+
+    private Boolean isSpecialDate(Date date) {
+
+        List<Integer> specialDates = db.calendarDatesDAO().getDates();
+
+        for(Integer d : specialDates){
+            try {
+                if(date.compareTo(dateFormat.parse(String.valueOf(d))) == 0){
+                    return true;
+                }
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return false;
+    }
 }

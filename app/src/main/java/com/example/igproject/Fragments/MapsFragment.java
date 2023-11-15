@@ -7,13 +7,15 @@ import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupWindow;
+import android.widget.TableRow;
+import android.widget.TextView;
 
-import com.example.igproject.Models.Stop;
 import com.example.igproject.Models.StopGroup;
+import com.example.igproject.Models.StopTime;
 import com.example.igproject.R;
 import com.example.igproject.ViewModels.MapViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,32 +26,31 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.checkerframework.common.initializedfields.qual.EnsuresInitializedFields;
-
+import java.sql.Time;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Date;
 
-public class MapsFragment extends Fragment {
-
+public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
     private static MapViewModel _viewModel;
 
     private HandlerThread handlerThread;
 
     private Handler mainHandler;
+
     private ArrayList<StopGroup> stops;
+
+    private GoogleMap map;
 
     public MapsFragment(MapViewModel viewModel){
 
         _viewModel = viewModel;
 
         handlerThread = new HandlerThread("dbThread");
+
         handlerThread.start();
 
         mainHandler = new Handler();
-
-        stops = new ArrayList<>();
     }
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -66,6 +67,8 @@ public class MapsFragment extends Fragment {
         @Override
         public synchronized void onMapReady(GoogleMap googleMap) {
             loadMap(googleMap);
+            map = googleMap;
+            map.setInfoWindowAdapter(new departurePopUp());
         }
 
         private void loadMap(GoogleMap googleMap) {
@@ -73,33 +76,21 @@ public class MapsFragment extends Fragment {
 
             bgHandler.post(() -> {
                 //_viewModel.importData();
-                for (StopGroup stop : _viewModel.renderStops()) {
-                    stops.add(stop);
-                }
+                stops = new ArrayList<>(_viewModel.renderStops());
                 mainHandler.post(() -> {
                     renderMarkers(googleMap);
                 });
-
             });
         }
+
         private void renderMarkers(GoogleMap googleMap) {
             for (StopGroup s: stops) {
                 LatLng stopPos = new LatLng(Double.parseDouble(s.stopLat), Double.parseDouble(s.stopLon));
                 googleMap.addMarker(new MarkerOptions().position(stopPos).title(s.stopGroupName));
             }
-            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(@NonNull Marker marker) {
-
-                    return false;
-                }
-            });
+            googleMap.setOnMarkerClickListener(MapsFragment.this::onMarkerClick);
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.43713, 12.33265), 16));
         }
-//        public void refresh(View view){
-//            Handler bgHandler = new Handler(handlerThread.getLooper());
-//            bgHandler.post(() -> {_viewModel.importData();});
-//        }
         
     };
 
@@ -118,6 +109,51 @@ public class MapsFragment extends Fragment {
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        marker.showInfoWindow();
+        return false;
+    }
+
+    // classe per definire il popup delle partenze
+    private class departurePopUp implements GoogleMap.InfoWindowAdapter {
+
+        //private final View window;
+        private final View window;
+
+        departurePopUp() {
+            window = getLayoutInflater().inflate(R.layout.departure_popup, null);;
+        }
+
+        @Nullable
+        @Override
+        public View getInfoContents(@NonNull Marker marker) {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public View getInfoWindow(@NonNull Marker marker) {
+            renderDeparture(marker, Date.from(Instant.now()));
+            return window;
+        }
+
+        private void renderDeparture(Marker marker,  Date date){
+            String title = marker.getTitle();
+
+            Handler bgHandler = new Handler(handlerThread.getLooper());
+            bgHandler.post(() -> {
+                ArrayList<StopTime> departures = new ArrayList<>(_viewModel.getStops(title, date));
+                mainHandler.post(() -> {
+                    for (StopTime departure: departures) {
+                        TableRow row = new TableRow(window.getContext());
+                        row.addView(new TextView(window.getContext()));
+                    }
+                });
+            });
         }
     }
 }

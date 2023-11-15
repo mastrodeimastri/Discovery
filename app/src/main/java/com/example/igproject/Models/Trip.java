@@ -24,10 +24,14 @@ public class Trip {
     @NotNull
     public Integer routeId;
 
+    @NotNull
+    public String serviceId;
+
     public Trip(){}
 
-    public Trip(String rId, String tId) {
+    public Trip(String rId, String tId, String sId) {
         this.routeId = Integer.parseInt(rId);
         this.tripId = Integer.parseInt(tId);
+        this.serviceId = sId;
     }
 }
