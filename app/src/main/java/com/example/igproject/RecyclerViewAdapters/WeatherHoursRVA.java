@@ -2,6 +2,7 @@ package com.example.igproject.RecyclerViewAdapters;
 
 import static com.example.igproject.Fragments.WeatherFragment.getWeatherImage;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.igproject.LocalData.WeatherHour;
 import com.example.igproject.R;
 
+//Adapter for recyclerview to display list with general weather info about every hour
 public class WeatherHoursRVA extends RecyclerView.Adapter<WeatherHoursRVA.MyViewHolder> {
     private final Context context;
     private WeatherHour[] weatherHours;
@@ -24,10 +26,15 @@ public class WeatherHoursRVA extends RecyclerView.Adapter<WeatherHoursRVA.MyView
         this.weatherHours = weatherHours;
     }
 
+    //Updates the stored data when they might change, it updates all the items
+    // the warning about it being an expensive operation is suppressed as its necessary
+    @SuppressLint("NotifyDataSetChanged")
     public void updateData(WeatherHour[] weatherHours){
         this.weatherHours = weatherHours;
+        notifyDataSetChanged();
     }
 
+    //Sets the view holder
     @NonNull
     @Override
     public WeatherHoursRVA.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -36,6 +43,7 @@ public class WeatherHoursRVA extends RecyclerView.Adapter<WeatherHoursRVA.MyView
         return new WeatherHoursRVA.MyViewHolder(view);
     }
 
+    //Loads the item at the given position by modifying its views
     @Override
     public void onBindViewHolder(@NonNull WeatherHoursRVA.MyViewHolder holder, int position) {
         holder.time.setText(weatherHours[position].getTimeAsString());
@@ -45,13 +53,14 @@ public class WeatherHoursRVA extends RecyclerView.Adapter<WeatherHoursRVA.MyView
         holder.image.setImageResource(getWeatherImage(weatherHours[position].weather));
     }
 
+    //Returns how many items are in the recyclerview
     @Override
     public int getItemCount() {
         return weatherHours.length;
     }
 
+    //Holder that stores all the views of every item in the layout
     public static class MyViewHolder extends RecyclerView.ViewHolder{
-
         ImageView image;
         TextView time, temp, rain, wind;
 

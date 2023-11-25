@@ -19,10 +19,13 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
 
-//Parcelable to communicate with fragment
+//Parcelable to communicate weather data with weather fragment
 public class WeatherData implements Parcelable {
+    //Listener to tell the main activity to update the ui when the data finished loading
     private MainActivityListener mainActivityListener;
-    public int updated;
+    //0 yet to load - 1 finish loading. It's an int to better become parcelable
+    private int updated;
+    //Also parcelable class, info about avery day's weather
     public WeatherDay[] weatherDays;
 
     public WeatherData(){
@@ -30,7 +33,7 @@ public class WeatherData implements Parcelable {
     }
 
     public void loadData(){
-        //Get stuff form API
+        //Get stuff form API without blocking ui
         Thread thread = new Thread(new LoadData());
         thread.start();
     }
@@ -38,18 +41,25 @@ public class WeatherData implements Parcelable {
     //Async thread to load the data
     private class LoadData implements Runnable {
         //0 good - 1 error connection - 2 error parsing
+        //private int loadState = 0; //Errors not handled yet
 
         @Override
         public void run() {
-            parseWeatherData();
+            String jsonString = requestWeatherData();
+            parseWeatherData(jsonString);
 
-            //UI update needs to be handled be the main thread
-            updated = 1;
+            //UI update needs to be handled be the main thread so its given to handler
+            //Synchronized to avoid thread issues
+            synchronized (WeatherData.this){
+                updated = 1;
+            }
+
             Handler threadHandler = new Handler(Looper.getMainLooper());
             threadHandler.post(WeatherData.this::notifyDataUpdated);
         }
 
-        private void parseWeatherData(){
+        //Reads the json string from the weather api (open-meteo) and returns it
+        private String requestWeatherData(){
             try {
                 //https://open-meteo.com/en/docs#minutely_15=&hourly=temperature_2m,precipitation_probability,precipitation,cloudcover,windspeed_10m,uv_index&timezone=Europe%2FBerlin&past_days=1
                 String apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=45.438759&longitude=12.327145&hourly=temperature_2m,precipitation,cloudcover,windspeed_10m,is_day&timezone=Europe%2FBerlin";
@@ -57,22 +67,31 @@ public class WeatherData implements Parcelable {
                 URL url = new URL(apiUrl);
 
                 StringBuilder json = new StringBuilder();
-                InputStream input = url.openStream();
-                InputStreamReader isr = new InputStreamReader(input);
-                BufferedReader reader = new BufferedReader(isr);
-                int c;
-                while ((c = reader.read()) != -1) {
-                    json.append((char) c);
-                }
 
-                parse(json.toString());
+                //Try-with-resources statement, ensures that even with exceptions resources are closed properly
+                try (InputStream input = url.openStream();
+                     InputStreamReader isr = new InputStreamReader(input);
+                     BufferedReader reader = new BufferedReader(isr)) {
+
+                    int c;
+                    while ((c = reader.read()) != -1) {
+                        json.append((char) c);
+                    }
+
+                    return json.toString();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            return null;
         }
 
-        private void parse(String json){
+        private void parseWeatherData(String json){
             try {
                 JSONObject weatherData = new JSONObject(json);
 
@@ -85,7 +104,7 @@ public class WeatherData implements Parcelable {
                 JSONArray isDayArray = hourlyData.getJSONArray("is_day");
                 JSONArray windSpeedArray = hourlyData.getJSONArray("windspeed_10m");
 
-                // Convert arrays to strings
+                // Convert json arrays to java arrays
                 LocalDateTime[] time = new LocalDateTime[timeArray.length()];
                 int[] temperature = new int[temperatureArray.length()];
                 double[] precipitation = new double[precipitationArray.length()];
@@ -102,9 +121,11 @@ public class WeatherData implements Parcelable {
                     windSpeed[i] = windSpeedArray.getDouble(i);
                 }
 
+                //Create the WeatherDay (and then they will create the WeatherHour) objects
                 int numOfDays = time.length / 24;
                 weatherDays = new WeatherDay[numOfDays];
                 for (int day = 0; day < numOfDays; ++day){
+                    //Every weatherDay gets only his corresponding data
                     weatherDays[day] = new WeatherDay(
                             Arrays.copyOfRange(time, day * 24, 24 + (day * 24)),
                             Arrays.copyOfRange(temperature, day * 24, 24 + (day * 24)),
@@ -121,30 +142,34 @@ public class WeatherData implements Parcelable {
         }
 
         private LocalDateTime formatDateTime(String dateString){
-            // Formato della data
+            //Format of date from api
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
-            // Parsa la data in un oggetto LocalDateTime
+            //Parsing of date into a LocalDateTime object
             return LocalDateTime.parse(dateString, formatter);
         }
     }
 
+    //Parcelable constructor to send an object of this class to other fragments or activities
     protected WeatherData(Parcel in) {
         updated = in.readInt();
         weatherDays = in.createTypedArray(WeatherDay.CREATOR);
     }
 
+    //Parcelable function to send an object of this class to other fragments or activities
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(updated);
         dest.writeTypedArray(weatherDays, flags);
     }
 
+    //Parcelable function to send an object of this class to other fragments or activities
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //Parcelable function to send an object of this class to other fragments or activities
     public static final Creator<WeatherData> CREATOR = new Creator<WeatherData>() {
         @Override
         public WeatherData createFromParcel(Parcel in) {
@@ -157,14 +182,23 @@ public class WeatherData implements Parcelable {
         }
     };
 
-    //Update weather ui
+    //Update weather ui by notifying the listener
     private void notifyDataUpdated() {
         if (mainActivityListener != null) {
             mainActivityListener.onDataUpdates("weather");
         }
     }
 
+    //Set the listener for ui updating
     public void setMainActivityListener(MainActivityListener listener){
         this.mainActivityListener = listener;
+    }
+
+    //Check if the async load has ended
+    public boolean isDataLoaded(){
+        //Synchronized to avoid thread issues
+        synchronized (this) {
+            return updated == 1;
+        }
     }
 }

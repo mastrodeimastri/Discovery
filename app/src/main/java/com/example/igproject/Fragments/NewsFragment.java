@@ -1,49 +1,35 @@
 package com.example.igproject.Fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.igproject.LocalData.AttendanceData;
 import com.example.igproject.R;
+import com.example.igproject.RecyclerViewAdapters.AttendanceRVA;
+import com.example.igproject.RecyclerViewAdapters.OnClickRVAListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NewsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class NewsFragment extends Fragment {
+import org.threeten.bp.LocalDate;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class NewsFragment extends Fragment implements OnClickRVAListener {
+    private static final String ARG_ATTENDANCE = "attendanceData";
+    private AttendanceData attendanceData;
+    private AttendanceRVA attendanceRVA;
 
     public NewsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NewsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static NewsFragment newInstance(String param1, String param2) {
+    public static NewsFragment newInstance(AttendanceData attendanceData) {
         NewsFragment fragment = new NewsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(ARG_ATTENDANCE, attendanceData);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,15 +38,44 @@ public class NewsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            //Data is passed from main activity with parcelable (it becomes a string, then is unraveled)
+            attendanceData = getArguments().getParcelable(ARG_ATTENDANCE);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_news, container, false);
+        //Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_news, container, false);
+
+        if (attendanceData.isDataLoaded()){
+            //If the data finished loading the loading screen disappears
+            LinearLayout loading = view.findViewById(R.id.loading_attendance);
+            loading.setVisibility(View.GONE);
+
+            RecyclerView recyclerViewAttendance = view.findViewById(R.id.AttendanceRecyclerView);
+            recyclerViewAttendance.setVisibility(View.VISIBLE);
+
+            setUpAttendanceViews(view);
+        }
+
+        return view;
+    }
+
+    private void setUpAttendanceViews(View view) {
+        RecyclerView recyclerViewAttendance = view.findViewById(R.id.AttendanceRecyclerView);
+        attendanceRVA = new AttendanceRVA(view.getContext(), attendanceData.attendanceDays, this);
+        recyclerViewAttendance.setAdapter(attendanceRVA);
+        recyclerViewAttendance.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        int dayNum = LocalDate.now().getDayOfWeek().getValue() - 1;
+        attendanceRVA.updateSelectedPos(dayNum);
+        recyclerViewAttendance.scrollToPosition(dayNum);
+    }
+
+    @Override
+    public void onClick(int position) {
+        attendanceRVA.updateSelectedPos(position);
     }
 }
