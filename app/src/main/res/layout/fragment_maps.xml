@@ -12,19 +12,31 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Fragments.MapsFragment" />
+        tools:context=".Fragments.MapsFragment"
+        android:visibility="gone"/>
 
     <LinearLayout
+        android:id="@+id/loading_maps"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/caricamento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/loading"
+            android:textSize="26sp" />
     </LinearLayout>
 
-<!--    <Button-->
-<!--        android:id="@+id/refresh"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Button"-->
-<!--        android:onClick="refresh"/>-->
 
 </FrameLayout>

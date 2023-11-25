@@ -20,7 +20,7 @@ import com.example.igproject.Models.*;
 * Questa classe serve per andare a definire il database locale e metodi con i quali interagirci
 * */
 @TypeConverters(com.example.igproject.Models.TypeConverters.class)
-@Database(entities = {Route.class, Stop.class, StopTime.class, StopGroup.class,Trip.class, Calendar.class, CalendarDates.class}, version = 7)
+@Database(entities = {Route.class, Stop.class, StopTime.class, StopGroup.class,Trip.class, Calendar.class, CalendarDates.class}, version = 9)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract RouteDAO routeDAO();

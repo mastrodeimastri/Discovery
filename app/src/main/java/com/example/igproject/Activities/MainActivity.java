@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         mapViewModel = new MapViewModel(this);
 
         setContentView(R.layout.activity_main);
-
         getData();
 
         BottomNavigationView bottomMenu = findViewById(R.id.bottomNavigationView);
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     //Listener activation to update ui
     @Override
     public void onDataUpdates(String id) {
-        switch (id){
+        switch (id) {
             case "weather":
                 if (getSupportFragmentManager().findFragmentById(R.id.frameLayout) instanceof WeatherFragment)
                     replaceFragment(R.id.weather);
@@ -93,4 +92,5 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 break;
         }
     }
+
 }

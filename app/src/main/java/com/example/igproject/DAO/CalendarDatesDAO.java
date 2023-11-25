@@ -19,6 +19,6 @@ public interface CalendarDatesDAO {
 
     @Query("SELECT serviceId " +
             "FROM CalendarDates " +
-            "WHERE date = :date")
-    List<String> getServices(Integer date);
+            "WHERE date = :date AND ExceptionType = 1")
+    String getServices(Integer date);
 }

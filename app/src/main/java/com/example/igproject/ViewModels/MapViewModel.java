@@ -9,11 +9,13 @@ import androidx.lifecycle.ViewModel;
 import com.example.igproject.Data.AppDatabase;
 import com.example.igproject.Models.Calendar;
 import com.example.igproject.Models.CalendarDates;
+import com.example.igproject.Models.Departure;
 import com.example.igproject.Models.Route;
 import com.example.igproject.Models.Stop;
 import com.example.igproject.Models.StopGroup;
 import com.example.igproject.Models.StopTime;
 import com.example.igproject.Models.Trip;
+import com.example.igproject.Models.TripStop;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -30,6 +32,7 @@ import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -47,6 +50,17 @@ public class MapViewModel extends ViewModel{
 
     public MapViewModel(Context context) {
         db = AppDatabase.getInstance(context);
+    }
+
+    public Date getTodayDate() {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("CET"));
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        cal.set(java.util.Calendar.MINUTE, 0);
+        cal.set(java.util.Calendar.SECOND, 0);
+        cal.set(java.util.Calendar.MILLISECOND, 0);
+
+        return cal.getTime();
     }
 
     private void parseData() {
@@ -122,11 +136,13 @@ public class MapViewModel extends ViewModel{
                                 case "calendar_dates.txt":
                                     db.calendarDatesDAO().insert(new CalendarDates(
                                             record.get(0),
-                                            record.get(1)));
+                                            record.get(1),
+                                            record.get(2)));
                                     break;
                                 case "stops.txt":
 
-                                    String stopGroupName = record.get(2).replaceAll("\"(.*?)\"","");
+                                    String stopGroupName = record.get(2).replaceAll("\"(.*?)\"","").replaceAll(" A RICHIESTA", "");
+
                                     String stopLat = record.get(4);
                                     String stopLon = record.get(5);
 
@@ -187,60 +203,68 @@ public class MapViewModel extends ViewModel{
     public List<StopGroup> renderStops() {
          try {
 
-            Date endDate = dateFormat.parse(String.valueOf(db.calendarDAO().getEndDate().get(0)));
-            Date today = Date.from(Instant.now());
+             if(db.flag == 0) {
+                 importData();
+             } else {
 
-            // controllo se il db è 'brand new' o se i dati sono scaduti
-            if(db.flag == 0 || endDate.compareTo(today) < 0) {
-                // importo i dati aggiornati
-                importData();
-            }
+                 Date endDate = dateFormat.parse(String.valueOf(db.calendarDAO().getEndDate().get(0)));
 
-            return db.stopGroupDAO().getAll();
+                 if(endDate.compareTo(getTodayDate()) < 0) {
+                     importData();
+                 }
+             }
+
+             return db.stopGroupDAO().getAll();
 
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public List<StopTime> getStops(String groupName, Date date){
+    public List<Departure> getDepartures(String groupName, Date date){
 
-        // TODO: prendersi i servizi attivi in quel giorno
-
-        List<String> services = new ArrayList<>();
+        String service = null;
 
         if(isSpecialDate(date)){
             // ottengo i servizi relativi al giorno speciale in input
-            services = db.calendarDatesDAO().getServices(Integer.parseInt(dateFormat.format(date)));
+            service = db.calendarDatesDAO().getServices(Integer.parseInt(dateFormat.format(date)));
         } else {
-            // TODO: completare switch per filtraggio dei servizi a seconda del giorno in input
+
             switch(date.getDay()){
                 case 1:
-
+                    service = db.calendarDAO().getSundayService();
                     break;
                 case 2:
+                    service = db.calendarDAO().getMondayService();
                     break;
                 case 3:
+                    service = db.calendarDAO().getTuesdayService();
                     break;
                 case 4:
+                    service = db.calendarDAO().getWednesdayService();
                     break;
                 case 5:
+                    service = db.calendarDAO().getThursdayService();
                     break;
                 case 6:
+                    service = db.calendarDAO().getFridayService();
                     break;
                 case 7:
+                    service = db.calendarDAO().getSaturdayService();
                     break;
             }
             //services = db.calendarDAO().getServices(date);
         }
+        return db.stopTimeDAO().getDepartures(groupName, service);
+    }
 
-        return db.stopTimeDAO().getDepartures(groupName, services);
+    public List<TripStop> getTripStops(Integer tripId, Integer stopSequence ) {
+        return db.stopTimeDAO().getTripStops(tripId, stopSequence);
     }
 
     private Boolean isSpecialDate(Date date) {
 
         List<Integer> specialDates = db.calendarDatesDAO().getDates();
-
         for(Integer d : specialDates){
             try {
                 if(date.compareTo(dateFormat.parse(String.valueOf(d))) == 0){

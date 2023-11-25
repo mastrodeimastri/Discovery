@@ -23,6 +23,42 @@ public interface CalendarDAO {
             "FROM Calendar")
     List<Calendar> getAll();
 
+    @Query("SELECT serviceId " +
+            "FROM Calendar " +
+            "WHERE Sunday = 1")
+    String getSundayService();
+
+    @Query("SELECT serviceId " +
+            "FROM Calendar " +
+            "WHERE Monday = 1")
+    String getMondayService();
+
+    @Query("SELECT serviceId " +
+            "FROM Calendar " +
+            "WHERE Tuesday = 1")
+    String getTuesdayService();
+
+    @Query("SELECT serviceId " +
+            "FROM Calendar " +
+            "WHERE Wednesday = 1")
+    String getWednesdayService();
+
+    @Query("SELECT serviceId " +
+            "FROM Calendar " +
+            "WHERE Thursday = 1")
+    String getThursdayService();
+
+    @Query("SELECT serviceId " +
+            "FROM Calendar " +
+            "WHERE Friday = 1")
+    String getFridayService();
+
+    @Query("SELECT serviceId " +
+            "FROM Calendar " +
+            "WHERE Saturday = 1")
+    String getSaturdayService();
+
+
     @Insert
     void insert(Calendar calendarEntry);
 }

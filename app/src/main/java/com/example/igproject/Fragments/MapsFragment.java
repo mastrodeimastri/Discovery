@@ -3,6 +3,9 @@ package com.example.igproject.Fragments;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,12 +14,19 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.example.igproject.LocalData.DeparturesData;
+import com.example.igproject.Models.Departure;
 import com.example.igproject.Models.StopGroup;
 import com.example.igproject.Models.StopTime;
+import com.example.igproject.Models.TripStop;
 import com.example.igproject.R;
+import com.example.igproject.RecyclerViewAdapters.DeparturesRVA;
 import com.example.igproject.ViewModels.MapViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,13 +36,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.concurrent.CountDownLatch;
 
 public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
     private static MapViewModel _viewModel;
+
+    private Boolean Modified = false;
 
     private HandlerThread handlerThread;
 
@@ -55,27 +73,16 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
         @Override
         public synchronized void onMapReady(GoogleMap googleMap) {
             loadMap(googleMap);
             map = googleMap;
-            map.setInfoWindowAdapter(new departurePopUp());
         }
 
         private void loadMap(GoogleMap googleMap) {
             Handler bgHandler = new Handler(handlerThread.getLooper());
 
             bgHandler.post(() -> {
-                //_viewModel.importData();
                 stops = new ArrayList<>(_viewModel.renderStops());
                 mainHandler.post(() -> {
                     renderMarkers(googleMap);
@@ -89,16 +96,30 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
                 googleMap.addMarker(new MarkerOptions().position(stopPos).title(s.stopGroupName));
             }
             googleMap.setOnMarkerClickListener(MapsFragment.this::onMarkerClick);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.43713, 12.33265), 16));
+            getActivity().findViewById(R.id.map).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.loading_maps).setVisibility(View.GONE);
+
+            if(!Modified){
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.43713, 12.33265), 16));
+            }
+
         }
         
     };
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Modified = true;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
+
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }
 
@@ -114,46 +135,25 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
 
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        marker.showInfoWindow();
-        return false;
+        renderDeparture(marker.getTitle(), _viewModel.getTodayDate());
+        return true;
     }
+    private void renderDeparture(String title,  Date date){
 
-    // classe per definire il popup delle partenze
-    private class departurePopUp implements GoogleMap.InfoWindowAdapter {
+        Handler bgHandler = new Handler(handlerThread.getLooper());
+        bgHandler.post(() -> {
+            ArrayList<Departure> departures = new ArrayList<>(_viewModel.getDepartures(title, date));
+            ArrayList<List<TripStop>> tripStops = new ArrayList<>();
 
-        //private final View window;
-        private final View window;
-
-        departurePopUp() {
-            window = getLayoutInflater().inflate(R.layout.departure_popup, null);;
-        }
-
-        @Nullable
-        @Override
-        public View getInfoContents(@NonNull Marker marker) {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public View getInfoWindow(@NonNull Marker marker) {
-            renderDeparture(marker, Date.from(Instant.now()));
-            return window;
-        }
-
-        private void renderDeparture(Marker marker,  Date date){
-            String title = marker.getTitle();
-
-            Handler bgHandler = new Handler(handlerThread.getLooper());
-            bgHandler.post(() -> {
-                ArrayList<StopTime> departures = new ArrayList<>(_viewModel.getStops(title, date));
-                mainHandler.post(() -> {
-                    for (StopTime departure: departures) {
-                        TableRow row = new TableRow(window.getContext());
-                        row.addView(new TextView(window.getContext()));
-                    }
-                });
+            for(Departure departure : departures) {
+                tripStops.add(_viewModel.getTripStops(departure.tripId, departure.stopSequence));
+            }
+            mainHandler.post(()->{
+                DeparturesData data = new DeparturesData(departures, tripStops, title);
+                DeparturesFragment fragment = DeparturesFragment.newInstance(data);
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, fragment).addToBackStack("maps").commit();
             });
-        }
+        });
     }
+
 }
