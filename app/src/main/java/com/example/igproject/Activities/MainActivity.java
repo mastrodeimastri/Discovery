@@ -6,8 +6,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.view.View;
 
+import com.example.igproject.Fragments.GuideFragment;
 import com.example.igproject.Fragments.MapsFragment;
+import com.example.igproject.Fragments.ProfileFragment;
 import com.example.igproject.Fragments.WeatherFragment;
 import com.example.igproject.Fragments.NewsFragment;
 import com.example.igproject.LocalData.AttendanceData;
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
             // Caricamento frammento pagina navigazione
             loadFragment(new MapsFragment(mapViewModel));
         } else {
-            //caricamentp pagina profilo
+            loadFragment(new ProfileFragment());
         }
     }
 
@@ -106,7 +109,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
                 if (getSupportFragmentManager().findFragmentById(R.id.frameLayout) instanceof MapsFragment)
                     replaceFragment(R.id.map);
                 break;
+            case "profile":
+                if (getSupportFragmentManager().findFragmentById(R.id.frameLayout) instanceof MapsFragment)
+                    replaceFragment(R.id.profile);
         }
     }
 
+    public void onGuideBtnClicked(View view){
+        GuideFragment fragment = GuideFragment.newInstance();
+        this.getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, fragment).addToBackStack("profile").commit();
+    }
 }

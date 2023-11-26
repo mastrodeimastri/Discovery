@@ -206,12 +206,13 @@ public class MapViewModel extends ViewModel{
              if(db.flag == 0) {
                  importData();
              } else {
+                if(db.calendarDAO().getEndDate() != null) {
+                    Date endDate = dateFormat.parse(String.valueOf(db.calendarDAO().getEndDate().get(0)));
 
-                 Date endDate = dateFormat.parse(String.valueOf(db.calendarDAO().getEndDate().get(0)));
-
-                 if(endDate.compareTo(getTodayDate()) < 0) {
-                     importData();
-                 }
+                    if(endDate.compareTo(getTodayDate()) < 0) {
+                        importData();
+                    }
+                }
              }
 
              return db.stopGroupDAO().getAll();
@@ -229,31 +230,30 @@ public class MapViewModel extends ViewModel{
             // ottengo i servizi relativi al giorno speciale in input
             service = db.calendarDatesDAO().getServices(Integer.parseInt(dateFormat.format(date)));
         } else {
-
-            switch(date.getDay()){
-                case 1:
+            int day = date.getDay();
+            switch(day){
+                case 0:
                     service = db.calendarDAO().getSundayService();
                     break;
-                case 2:
+                case 1:
                     service = db.calendarDAO().getMondayService();
                     break;
-                case 3:
+                case 2:
                     service = db.calendarDAO().getTuesdayService();
                     break;
-                case 4:
+                case 3:
                     service = db.calendarDAO().getWednesdayService();
                     break;
-                case 5:
+                case 4:
                     service = db.calendarDAO().getThursdayService();
                     break;
-                case 6:
+                case 5:
                     service = db.calendarDAO().getFridayService();
                     break;
-                case 7:
+                case 6:
                     service = db.calendarDAO().getSaturdayService();
                     break;
             }
-            //services = db.calendarDAO().getServices(date);
         }
         return db.stopTimeDAO().getDepartures(groupName, service);
     }

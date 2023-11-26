@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.Pag3Fragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAlignment="center"
+        android:layout_margin="20dp"
+        android:text="Nell'ultima sezione si può andare a consultare una mappa di Venezia con tutte le fermate dei vaporetti
+contrassegnate come nella regione arancio. Andando a cliccare su una di queste di visualizzeranno tutte le partenze da quel punto nell'arco di un'ora " />
+    <ImageView
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:layout_marginTop="20dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/mappa"/>
+
+</RelativeLayout>

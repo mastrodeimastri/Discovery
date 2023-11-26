@@ -52,6 +52,9 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
 
     private Boolean Modified = false;
 
+
+    private static Boolean isSync = false;
+
     private HandlerThread handlerThread;
 
     private Handler mainHandler;
@@ -75,18 +78,24 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
 
         @Override
         public synchronized void onMapReady(GoogleMap googleMap) {
-            loadMap(googleMap);
-            map = googleMap;
+            if(!isSync) {
+                loadMap(googleMap);
+                map = googleMap;
+            }
+
         }
 
         private void loadMap(GoogleMap googleMap) {
             Handler bgHandler = new Handler(handlerThread.getLooper());
-
+            isSync = true;
             bgHandler.post(() -> {
                 stops = new ArrayList<>(_viewModel.renderStops());
-                mainHandler.post(() -> {
-                    renderMarkers(googleMap);
-                });
+                if(stops != null) {
+                    mainHandler.post(() -> {
+                        renderMarkers(googleMap);
+                        isSync = false;
+                    });
+                }
             });
         }
 
