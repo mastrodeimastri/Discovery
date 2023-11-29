@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/news_fragment"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="15dp"
             android:textColor="@color/bluish_black"
             android:textSize="28sp"
             android:textStyle="bold" />

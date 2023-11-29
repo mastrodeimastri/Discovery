@@ -13,6 +13,7 @@ import com.example.igproject.Fragments.WeatherFragment;
 import com.example.igproject.Fragments.NewsFragment;
 import com.example.igproject.LocalData.AttendanceData;
 import com.example.igproject.LocalData.MainActivityListener;
+import com.example.igproject.LocalData.NewsData;
 import com.example.igproject.LocalData.WeatherData;
 import com.example.igproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     //Weather data is taken only once from api, main stores it to pass when fragment is loaded
     private WeatherData weatherData;
     private AttendanceData attendanceData;
+    private NewsData newsData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +66,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         attendanceData = new AttendanceData();
         attendanceData.setMainActivityListener(this);
         attendanceData.loadData();
+
+        newsData = new NewsData();
+        newsData.setMainActivityListener(this);
+        newsData.loadData();
     }
 
     //Changes the current fragment based on menu input or when the ui updates
     public void replaceFragment(int id){
         if (id == R.id.news){
-            NewsFragment newsFragment = NewsFragment.newInstance(attendanceData);
+            NewsFragment newsFragment = NewsFragment.newInstance(attendanceData, newsData);
             loadFragment(newsFragment);
         }
         else if (id == R.id.weather){

@@ -34,7 +34,7 @@
                 android:id="@+id/titleNews"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/hyperlink"
+                android:text="Titolo"
                 android:textStyle="bold"
                 android:textSize="18dp"
                 android:layout_marginRight="10dp"

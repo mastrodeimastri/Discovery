@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.igproject.LocalData.AttendanceData;
+import com.example.igproject.LocalData.NewsData;
 import com.example.igproject.R;
 import com.example.igproject.RecyclerViewAdapters.AttendanceRVA;
 import com.example.igproject.RecyclerViewAdapters.NewsRVA;
@@ -20,7 +21,9 @@ import org.threeten.bp.LocalDate;
 
 public class NewsFragment extends Fragment implements OnClickRVAListener {
     private static final String ARG_ATTENDANCE = "attendanceData";
+    private static final String ARG_NEWS = "newsData";
     private AttendanceData attendanceData;
+    private NewsData newsData;
     private AttendanceRVA attendanceRVA;
     private NewsRVA newsRVA;
 
@@ -28,10 +31,11 @@ public class NewsFragment extends Fragment implements OnClickRVAListener {
         // Required empty public constructor
     }
 
-    public static NewsFragment newInstance(AttendanceData attendanceData) {
+    public static NewsFragment newInstance(AttendanceData attendanceData, NewsData newsData) {
         NewsFragment fragment = new NewsFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_ATTENDANCE, attendanceData);
+        args.putParcelable(ARG_NEWS, newsData);
         fragment.setArguments(args);
         return fragment;
     }
@@ -42,6 +46,7 @@ public class NewsFragment extends Fragment implements OnClickRVAListener {
         if (getArguments() != null) {
             //Data is passed from main activity with parcelable (it becomes a string, then is unraveled)
             attendanceData = getArguments().getParcelable(ARG_ATTENDANCE);
+            newsData = getArguments().getParcelable(ARG_NEWS);
         }
     }
 
@@ -62,13 +67,15 @@ public class NewsFragment extends Fragment implements OnClickRVAListener {
             setUpAttendanceViews(view);
         }
 
-        LinearLayout loading = view.findViewById(R.id.loading_news);
-        loading.setVisibility(View.GONE);
+        if (newsData.isDataLoaded()){
+            LinearLayout loading = view.findViewById(R.id.loading_news);
+            loading.setVisibility(View.GONE);
 
-        RecyclerView recyclerViewNews = view.findViewById(R.id.NewsRecyclerView);
-        recyclerViewNews.setVisibility(View.VISIBLE);
+            RecyclerView recyclerViewNews = view.findViewById(R.id.NewsRecyclerView);
+            recyclerViewNews.setVisibility(View.VISIBLE);
 
-        setUpNewsViews(view);
+            setUpNewsViews(view);
+        }
 
         return view;
     }
@@ -86,7 +93,7 @@ public class NewsFragment extends Fragment implements OnClickRVAListener {
 
     private void setUpNewsViews(View view) {
         RecyclerView recyclerViewNews = view.findViewById(R.id.NewsRecyclerView);
-        newsRVA = new NewsRVA(view.getContext());
+        newsRVA = new NewsRVA(view.getContext(), newsData.newsArticles);
         recyclerViewNews.setAdapter(newsRVA);
         recyclerViewNews.setLayoutManager(new LinearLayoutManager(getContext()));
     }
