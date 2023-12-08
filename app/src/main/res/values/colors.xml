@@ -14,5 +14,6 @@
     <color name="old_yellow">#F1BD02</color>
     <color name="green">#4FCD00</color>
     <color name="text_white">#EEEEEE</color>
+    <color name="attendance_gray_background">#4FAAA4AE</color>
 
 </resources>

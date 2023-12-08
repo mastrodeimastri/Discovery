@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.view.View;
+import android.os.Handler;
+import android.view.View;
 
 import com.example.igproject.Fragments.GuideFragment;
 import com.example.igproject.Fragments.MapsFragment;
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     //Weather data is taken only once from api, main stores it to pass when fragment is loaded
     private WeatherData weatherData;
     private AttendanceData attendanceData;
+    private NewsData newsData;
 
 
 
@@ -37,6 +40,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         mapViewModel = new MapViewModel(this);
 
         setContentView(R.layout.activity_main);
+
+        //App starting animation
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.frameLayout).setVisibility(View.VISIBLE);
+                findViewById(R.id.bottomNavigationView).setVisibility(View.VISIBLE);
+                findViewById(R.id.logoMotionLayout).setVisibility(View.GONE);
+            }
+        }, 3000);
 
         //Load weather and news data from api
         getData();
@@ -65,12 +78,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         attendanceData = new AttendanceData();
         attendanceData.setMainActivityListener(this);
         attendanceData.loadData();
+
+        newsData = new NewsData();
+        newsData.setMainActivityListener(this);
+        newsData.loadData();
     }
 
     //Changes the current fragment based on menu input or when the ui updates
     public void replaceFragment(int id){
         if (id == R.id.news){
-            NewsFragment newsFragment = NewsFragment.newInstance(attendanceData);
+            NewsFragment newsFragment = NewsFragment.newInstance(attendanceData, newsData);
             loadFragment(newsFragment);
         }
         else if (id == R.id.weather){
