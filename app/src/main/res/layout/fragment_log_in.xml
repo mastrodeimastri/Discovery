@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.LogInFragment">
+    <EditText
+        android:id="@+id/usernameLogIn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:inputType="text"
+        android:hint="email"/>
+    <EditText
+        android:id="@+id/pwdLogIn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/usernameLogIn"
+        android:hint="password"
+        android:inputType="textPassword"/>
+    <Button
+        android:id="@+id/loginBtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/pwdLogIn"
+        android:text="Log In"
+        android:onClick="onLogInBtnClicked"/>
+
+    <TextView
+        android:id="@+id/registerLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Registrati"
+        android:layout_below="@id/loginBtn"
+        android:layout_centerHorizontal="true"
+        />
+
+    <TextView
+        android:id="@+id/forgivePwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password dimenticata?"
+        android:layout_below="@id/registerLink"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>

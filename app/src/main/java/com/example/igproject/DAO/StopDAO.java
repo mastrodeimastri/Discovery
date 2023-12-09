@@ -16,5 +16,5 @@ public interface StopDAO {
     List<Stop> getAll();
 
     @Insert
-    void insert(Stop stop);
+    void insertAll(List<Stop> stops);
 }

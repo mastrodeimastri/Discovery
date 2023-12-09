@@ -30,7 +30,6 @@
         android:layout_below="@id/reportBtn"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
-        android:onClick="onGuideBtnClicked"
         android:text="Guida" />
 
     <Button
@@ -61,4 +60,5 @@
         android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:text="Log Out" />
+
 </RelativeLayout>

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.Pag4Fragment">
+    tools:context=".Fragments.Guide.Pag4Fragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -12,9 +12,8 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
         android:textAlignment="center"
-        android:text="Nella sezione partenze si visualizzano gli orari deiv vaporetti.\nNella regione in nero viene
-indicato il nome della fermata, in quella in rosso il numero della linea, in quella in giallo l'orario,
-in quella in azzurro la destinazione e in quella in viola le fermate successive." />
+        android:text="Nella sezione partenze si visualizzano gli orari dei vaporetti con il dettaglio
+        della destionazione e le prossime fermate che verranno fatte e a che ora" />
 
     <ImageView
         android:layout_width="500dp"

@@ -1,4 +1,4 @@
-package com.example.igproject.Fragments;
+package com.example.igproject.Fragments.Guide;
 
 import android.os.Bundle;
 
@@ -12,10 +12,10 @@ import com.example.igproject.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Pag1Fragment#newInstance} factory method to
+ * Use the {@link Pag4Fragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Pag1Fragment extends Fragment {
+public class Pag4Fragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +26,7 @@ public class Pag1Fragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public Pag1Fragment() {
+    public Pag4Fragment() {
         // Required empty public constructor
     }
 
@@ -36,11 +36,11 @@ public class Pag1Fragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Pag1Fragment.
+     * @return A new instance of fragment Pag4Fragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Pag1Fragment newInstance(String param1, String param2) {
-        Pag1Fragment fragment = new Pag1Fragment();
+    public static Pag4Fragment newInstance(String param1, String param2) {
+        Pag4Fragment fragment = new Pag4Fragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,6 +61,6 @@ public class Pag1Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pag1, container, false);
+        return inflater.inflate(R.layout.fragment_pag4, container, false);
     }
 }

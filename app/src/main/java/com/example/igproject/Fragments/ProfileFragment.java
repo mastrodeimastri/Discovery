@@ -2,13 +2,23 @@ package com.example.igproject.Fragments;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.example.igproject.LocalData.ReportsData;
 import com.example.igproject.R;
+import com.google.firebase.Firebase;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,50 +27,92 @@ import com.example.igproject.R;
  */
 public class ProfileFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    FirebaseAuth authClient;
 
     public ProfileFragment() {
         // Required empty public constructor
+        authClient = FirebaseAuth.getInstance();
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
+
+    public static ProfileFragment newInstance() {
         ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        Button guideBtn = view.findViewById(R.id.guideBtn);
+        guideBtn.setOnClickListener( v -> {
+            GuideFragment fragment = GuideFragment.newInstance();
+            getActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frameLayout, fragment)
+                    .addToBackStack("profile")
+                    .commit();
+        });
+
+        Button logInBtn = view.findViewById(R.id.loginBtn);
+        logInBtn.setOnClickListener( v -> {
+            LogInFragment fragment = LogInFragment.newInstance();
+            getActivity()
+                    .getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frameLayout, fragment)
+                    .addToBackStack("profile")
+                    .commit();
+        });
+
+        Button logOutBtn = view.findViewById(R.id.logoutBtn);
+        logOutBtn.setOnClickListener( v -> {
+            FirebaseAuth authClient = FirebaseAuth.getInstance();
+            authClient.signOut();
+        });
+
+        Button reportBtn = view.findViewById(R.id.reportBtn);
+        reportBtn.setOnClickListener( v -> {
+            // TODO: creare il un servizio che mi faccia le operazioni CRUD per i report
+            ReportsData reportsData = new ReportsData(new ArrayList<>());
+            ReportFragment fragment = ReportFragment.newInstance(reportsData);
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, fragment).addToBackStack("profile").commit();
+        });
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        FirebaseAuth.getInstance().addAuthStateListener(firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if(user != null) {
+                view.findViewById(R.id.loginBtn).setVisibility(View.GONE);
+                view.findViewById(R.id.logoutBtn).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.reportBtn).setVisibility(View.VISIBLE);
+            } else {
+                view.findViewById(R.id.loginBtn).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.logoutBtn).setVisibility(View.GONE);
+                view.findViewById(R.id.reportBtn).setVisibility(View.GONE);
+            }
+        });
+
+        if(authClient.getCurrentUser() != null) {
+            view.findViewById(R.id.loginBtn).setVisibility(View.GONE);
+            view.findViewById(R.id.logoutBtn).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.reportBtn).setVisibility(View.VISIBLE);
+        }
     }
 }

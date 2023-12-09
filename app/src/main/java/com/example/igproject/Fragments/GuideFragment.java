@@ -4,22 +4,19 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.igproject.Fragments.Pag1Fragment;
-import com.example.igproject.Fragments.Pag2Fragment;
-import com.example.igproject.Fragments.Pag3Fragment;
-import com.example.igproject.Fragments.Pag4Fragment;
-import com.example.igproject.Fragments.Pag5Fragment;
-import com.example.igproject.Fragments.ProfileFragment;
+import com.example.igproject.Fragments.Guide.Pag1Fragment;
+import com.example.igproject.Fragments.Guide.Pag2Fragment;
+import com.example.igproject.Fragments.Guide.Pag3Fragment;
+import com.example.igproject.Fragments.Guide.Pag4Fragment;
+import com.example.igproject.Fragments.Guide.Pag5Fragment;
 import com.example.igproject.R;
 
 

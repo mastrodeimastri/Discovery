@@ -3,16 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.Pag2Fragment">
+    tools:context=".Fragments.Guide.Pag2Fragment">
 
     <TextView
         android:id="@+id/weatherTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Nella sezione Meteo trovete tutte le informazioni relative alle condizioni metereologiche.\nNella sezione in nero
-troverete le condizioni meteo attuali, mentre nella sezione rossa si può andare a selezionare un giorno specifico, con le informazioni sulle condizioni
-del tempo nell'arco della giornata che appariranno nella sezione gialla."
+        android:text="Nella sezione Meteo trovete tutte le informazioni relative alle condizioni metereologiche
+        dei prossimi sette giori."
         android:textAlignment="center" />
 
     <!-- TODO: Update blank fragment layout -->

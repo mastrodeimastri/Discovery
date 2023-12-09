@@ -15,7 +15,7 @@ public interface StopGroupDAO{
     List<StopGroup> getAll();
 
     @Insert
-    void insert(StopGroup stopGroup);
+    void insertAll(List<StopGroup> stopGroups);
 
     @Query("SELECT * FROM StopGroups WHERE stopGroupName = :name")
     StopGroup getEntity(String name);

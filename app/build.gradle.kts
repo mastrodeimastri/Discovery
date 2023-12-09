@@ -34,8 +34,11 @@ android {
 }
 
 dependencies {
-    implementation("com.google.firebase:firebase-firestore:24.9.0")
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.firebase:firebase-auth:22.3.0")
+    implementation("com.google.firebase:firebase-firestore:24.9.1")
     val room_version = "2.5.2"
     implementation("org.threeten:threetenbp:1.4.3")
     implementation("com.google.android.material:material:1.4.1")

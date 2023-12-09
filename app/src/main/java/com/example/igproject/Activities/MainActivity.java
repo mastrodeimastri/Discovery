@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.os.Handler;
 import android.view.View;
+import android.widget.EditText;
 
 import com.example.igproject.Fragments.GuideFragment;
 import com.example.igproject.Fragments.MapsFragment;
@@ -17,11 +18,15 @@ import com.example.igproject.Fragments.WeatherFragment;
 import com.example.igproject.Fragments.NewsFragment;
 import com.example.igproject.LocalData.AttendanceData;
 import com.example.igproject.LocalData.MainActivityListener;
+import com.example.igproject.LocalData.NewsData;
 import com.example.igproject.LocalData.WeatherData;
+import com.example.igproject.Fragments.LogInFragment;
 import com.example.igproject.R;
+import com.example.igproject.Fragments.ReportFragment;
 import com.example.igproject.ViewModels.MapViewModel;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements MainActivityListener {
 
@@ -36,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FirebaseApp.initializeApp(this);
 
         mapViewModel = new MapViewModel(this);
 
@@ -132,8 +139,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityListe
         }
     }
 
-    public void onGuideBtnClicked(View view){
-        GuideFragment fragment = GuideFragment.newInstance();
-        this.getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, fragment).addToBackStack("profile").commit();
+    public void toReportPage(View view) {
+
+    }
+
+    public void onLogInBtnClicked(View view) {
+        EditText username = this.findViewById(R.id.usernameLogIn);
+        EditText pwd = this.findViewById(R.id.pwdLogIn);
+
+        if(username.getText().length() > 0 && pwd.getText().length() > 0) {
+            FirebaseAuth authClient = FirebaseAuth.getInstance();
+            authClient.signInWithEmailAndPassword(username.getText().toString(), pwd.getText().toString())
+                    .addOnSuccessListener(authResult -> replaceFragment(R.id.profile));
+        }
     }
 }

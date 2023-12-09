@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.Pag5Fragment">
+    tools:context=".Fragments.Guide.Pag5Fragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -12,8 +12,8 @@
         android:layout_margin="10dp"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
-        android:text="In questa sezione si visualizzeranno le informazioni relative alle ultime notizie (regione gialla)
-e alla affluenze giornaliere (sezione rossa) di Venezia" />
+        android:text="In questa sezione si visualizzeranno le informazioni relative alle ultime notizie
+e alla affluenze giornaliere di Venezia" />
     <ImageView
         android:layout_width="500dp"
         android:layout_height="500dp"

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.Pag1Fragment">
+    tools:context=".Fragments.Guide.Pag1Fragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -13,8 +13,7 @@
         android:textAlignment="center"
         android:layout_centerVertical="true"
         android:text="Benvenuti, questa guida vi introdurrà all'utilizzo di
-questa applicazione che è stata pensata per rivolgersi a chi abita e chi visita
-la città di Venezia" />
+dell'applicazione che è stata pensata per rivolgersi a chi abita e visita Venezia" />
 
 
 </RelativeLayout>

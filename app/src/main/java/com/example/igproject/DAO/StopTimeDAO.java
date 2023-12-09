@@ -40,5 +40,5 @@ public interface StopTimeDAO {
     List<TripStop> getTripStops(Integer tripId, Integer stopSequence);
 
     @Insert
-    void insert(StopTime stopTime);
+    void insertAll(List<StopTime> stopTimes);
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @Dao
 public interface CalendarDatesDAO {
     @Insert
-    void insert(CalendarDates calendarDate);
+    void insertAll(List<CalendarDates> calendarDates);
 
     @Query("SELECT date " +
             "FROM CalendarDates")

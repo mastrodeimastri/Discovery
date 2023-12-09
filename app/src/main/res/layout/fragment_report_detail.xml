@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.ReportDetailFragment">
+
+    <EditText
+        android:id="@+id/objectDetail"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="oggetto"
+        android:layout_centerHorizontal="true"
+        />
+
+    <EditText
+        android:id="@+id/bodyDetail"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="Descrizione"
+        android:layout_below="@id/objectDetail"/>
+
+    <Button
+        android:id="@+id/createUpdateBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crea / Aggiorna"
+        android:layout_below="@id/bodyDetail"
+        android:layout_margin="20dp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/reportId"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+
+</RelativeLayout>

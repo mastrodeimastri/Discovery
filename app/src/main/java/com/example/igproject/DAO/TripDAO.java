@@ -6,8 +6,10 @@ import androidx.room.Insert;
 import com.example.igproject.Models.Route;
 import com.example.igproject.Models.Trip;
 
+import java.util.List;
+
 @Dao
 public interface TripDAO {
     @Insert
-    void insert(Trip trip);
+    void insertAll(List<Trip> trips);
 }

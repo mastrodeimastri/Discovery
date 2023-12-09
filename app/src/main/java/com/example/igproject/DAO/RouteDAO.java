@@ -12,6 +12,5 @@ import java.util.List;
 public interface RouteDAO {
 
     @Insert
-    void insert(Route route);
-
+    void insertAll(List<Route> routes);
 }

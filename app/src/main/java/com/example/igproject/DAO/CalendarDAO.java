@@ -60,5 +60,5 @@ public interface CalendarDAO {
 
 
     @Insert
-    void insert(Calendar calendarEntry);
+    void insertAll(List<Calendar> calendars);
 }

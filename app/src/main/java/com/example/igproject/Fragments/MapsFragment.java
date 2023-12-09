@@ -52,7 +52,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
 
     private Boolean Modified = false;
 
-
     private static Boolean isSync = false;
 
     private HandlerThread handlerThread;
@@ -100,13 +99,17 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
         }
 
         private void renderMarkers(GoogleMap googleMap) {
+
             for (StopGroup s: stops) {
                 LatLng stopPos = new LatLng(Double.parseDouble(s.stopLat), Double.parseDouble(s.stopLon));
                 googleMap.addMarker(new MarkerOptions().position(stopPos).title(s.stopGroupName));
             }
             googleMap.setOnMarkerClickListener(MapsFragment.this::onMarkerClick);
-            getActivity().findViewById(R.id.map).setVisibility(View.VISIBLE);
-            getActivity().findViewById(R.id.loading_maps).setVisibility(View.GONE);
+            if(getActivity() != null){
+                getActivity().findViewById(R.id.map).setVisibility(View.VISIBLE);
+                getActivity().findViewById(R.id.loading_maps).setVisibility(View.GONE);
+            }
+
 
             if(!Modified){
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(45.43713, 12.33265), 16));
