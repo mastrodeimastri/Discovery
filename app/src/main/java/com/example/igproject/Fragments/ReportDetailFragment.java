@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.igproject.Models.Report;
 import com.example.igproject.R;
@@ -72,6 +73,8 @@ public class ReportDetailFragment extends Fragment {
                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .collection("Reports").add(new Report(object.getText().toString(),
                             body.getText().toString())).addOnSuccessListener( l -> {
+                            Toast.makeText(getActivity(), "Grazie per la tua segnalazione",
+                                Toast.LENGTH_LONG).show();
                             ProfileFragment fragment = ProfileFragment.newInstance();
                             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, fragment).addToBackStack("logIn").commit();
                         });

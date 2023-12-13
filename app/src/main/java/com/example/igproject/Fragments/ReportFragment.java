@@ -14,10 +14,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.igproject.LocalData.ReportsData;
+import com.example.igproject.Models.Report;
 import com.example.igproject.R;
 import com.example.igproject.RecyclerViewAdapters.ReportsRVA;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ReportFragment extends Fragment {
@@ -52,6 +57,13 @@ public class ReportFragment extends Fragment {
 
         RecyclerView rView = view.findViewById(R.id.reportsRecyclerView);
         rView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).collection("Reports").get().addOnCompleteListener(t -> {
+            List<QueryDocumentSnapshot> reports = new ArrayList<>();
+            for(QueryDocumentSnapshot document : t.getResult()) {
+                reports.add(document);
+            }
+            rView.setAdapter(new ReportsRVA(reports));
+        });
 
         return view;
     }

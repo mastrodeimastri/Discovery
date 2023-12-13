@@ -6,6 +6,10 @@ public class Report {
 
     public String body;
 
+    public Report() {
+
+    }
+
     public Report(String object, String body) {
         this.object = object;
         this.body = body;

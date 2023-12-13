@@ -5,19 +5,39 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.InsertEmailFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <EditText
-        android:id="@+id/emailPwd"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:hint="email" />
-
-    <Button
-        android:id="@+id/submitEmail"
+    <RelativeLayout
+        android:id="@+id/Emailregion"
+        android:layout_marginTop="70dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="invia"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="20dp"/>
+        android:layout_centerVertical="true">
 
+        <TextView
+            android:id="@+id/textEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:textSize="20dp"
+            android:text="Ti verrà inviata una mail all'indirizzo di posta inserita per resettare la password" />
+
+        <EditText
+            android:id="@+id/emailPwd"
+            android:layout_below="@+id/textEmail"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="email" />
+
+        <Button
+            android:id="@+id/submitEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textEmail"
+            android:text="invia"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"/>
+    </RelativeLayout>
 </RelativeLayout>

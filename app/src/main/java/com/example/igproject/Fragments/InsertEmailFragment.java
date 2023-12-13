@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.igproject.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -53,6 +54,8 @@ public class InsertEmailFragment extends Fragment {
             EditText email = view.findViewById(R.id.emailPwd);
             FirebaseAuth.getInstance().sendPasswordResetEmail(email.getText().toString())
                     .addOnSuccessListener( l -> {
+                        Toast.makeText(getActivity(), "Abbiamo ricevuto la tua richiesta di reset password",
+                                Toast.LENGTH_LONG).show();
                         LogInFragment fragment = LogInFragment.newInstance();
                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, fragment).addToBackStack("register").commit();
                     });

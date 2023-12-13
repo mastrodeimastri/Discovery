@@ -1,5 +1,8 @@
 package com.example.igproject.RecyclerViewAdapters;
 
+import static android.app.PendingIntent.getActivity;
+
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,6 +16,7 @@ import com.example.igproject.R;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.ktx.Firebase;
 
 import java.util.List;
@@ -20,29 +24,29 @@ import java.util.List;
 public class ReportsRVA extends RecyclerView.Adapter<ReportsRVA.MyViewHolder> {
 
 
-    List<Report> reports;
+    List<QueryDocumentSnapshot> reports;
 
-    public ReportsRVA(List<Report> reports) {
+    public ReportsRVA(List<QueryDocumentSnapshot> reports) {
         this.reports = reports;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_report, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        holder.objectView.setText(reports.get(position).object);
+        holder.objectView.setText(reports.get(position).toObject(Report.class).object);
         holder.btn.setOnClickListener((view) -> {
-            // TODO: renderizzare la pagina per la modifica e la creazione di un report
+
         });
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return reports.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
