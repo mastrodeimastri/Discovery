@@ -1,4 +1,4 @@
-package com.example.igproject.Fragments;
+package com.example.igproject.Fragments.Profile;
 
 import android.os.Bundle;
 
@@ -13,8 +13,6 @@ import android.widget.Button;
 
 import com.example.igproject.LocalData.ReportsData;
 import com.example.igproject.R;
-import com.google.firebase.Firebase;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

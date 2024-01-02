@@ -1,33 +1,30 @@
-package com.example.igproject.Fragments;
+package com.example.igproject.Fragments.Navigation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
+import android.widget.ImageButton;
 
 import com.example.igproject.LocalData.DeparturesData;
 import com.example.igproject.Models.Departure;
 import com.example.igproject.Models.StopGroup;
-import com.example.igproject.Models.StopTime;
 import com.example.igproject.Models.TripStop;
 import com.example.igproject.R;
-import com.example.igproject.RecyclerViewAdapters.DeparturesRVA;
 import com.example.igproject.ViewModels.MapViewModel;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,16 +33,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.Serializable;
-import java.sql.Time;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
-import java.util.concurrent.CountDownLatch;
 
 public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
     private static MapViewModel _viewModel;
@@ -60,9 +50,11 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
 
     private ArrayList<StopGroup> stops;
 
+    private FusedLocationProviderClient fusedLocationClient;
+
     private GoogleMap map;
 
-    public MapsFragment(MapViewModel viewModel){
+    public MapsFragment(MapViewModel viewModel) {
 
         _viewModel = viewModel;
 
@@ -77,7 +69,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
 
         @Override
         public synchronized void onMapReady(GoogleMap googleMap) {
-            if(!isSync) {
+            if (!isSync) {
                 loadMap(googleMap);
                 map = googleMap;
             }
@@ -89,7 +81,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
             isSync = true;
             bgHandler.post(() -> {
                 stops = new ArrayList<>(_viewModel.renderStops());
-                if(stops != null) {
+                if (stops != null) {
                     mainHandler.post(() -> {
                         renderMarkers(googleMap);
                         isSync = false;
@@ -100,14 +92,35 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
 
         private void renderMarkers(GoogleMap googleMap) {
 
-            for (StopGroup s: stops) {
+            for (StopGroup s : stops) {
                 LatLng stopPos = new LatLng(Double.parseDouble(s.stopLat), Double.parseDouble(s.stopLon));
                 googleMap.addMarker(new MarkerOptions().position(stopPos).title(s.stopGroupName));
             }
-            googleMap.setOnMarkerClickListener(MapsFragment.this::onMarkerClick);
-            if(getActivity() != null){
+            googleMap.setOnMarkerClickListener(MapsFragment.this);
+            if (getActivity() != null) {
                 getActivity().findViewById(R.id.map).setVisibility(View.VISIBLE);
                 getActivity().findViewById(R.id.loading_maps).setVisibility(View.GONE);
+                ImageButton button = getActivity().findViewById(R.id.posBtn);
+                button.setOnClickListener(v -> {
+
+
+                    LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+                    boolean isGSPEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                    boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+                    if(isNetworkEnabled) {
+                        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            getActivity().requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
+                        }
+                    }
+
+                    fusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(getActivity(), l -> {
+                                if (l != null) {
+                                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(l.getLatitude(), l.getLongitude()), 16));
+                                }
+                            });
+                });
             }
 
 
@@ -131,7 +144,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }
 
@@ -143,6 +155,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
     }
 
     @Override
@@ -150,6 +163,7 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
         renderDeparture(marker.getTitle(), _viewModel.getTodayDate());
         return true;
     }
+
     private void renderDeparture(String title,  Date date){
 
         Handler bgHandler = new Handler(handlerThread.getLooper());

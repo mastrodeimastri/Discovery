@@ -1,4 +1,4 @@
-package com.example.igproject.Fragments;
+package com.example.igproject.Fragments.Profile;
 
 import android.os.Bundle;
 
@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.igproject.LocalData.ReportsData;
-import com.example.igproject.Models.Report;
 import com.example.igproject.R;
 import com.example.igproject.RecyclerViewAdapters.ReportsRVA;
 import com.google.firebase.auth.FirebaseAuth;

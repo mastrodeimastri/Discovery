@@ -1,4 +1,4 @@
-package com.example.igproject.Fragments;
+package com.example.igproject.Fragments.Navigation;
 
 import android.os.Bundle;
 
@@ -14,13 +14,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.igproject.LocalData.DeparturesData;
-import com.example.igproject.Models.Departure;
-import com.example.igproject.Models.TripStop;
 import com.example.igproject.R;
 import com.example.igproject.RecyclerViewAdapters.DeparturesRVA;
 import com.example.igproject.ViewModels.MapViewModel;
-
-import java.util.List;
 
 
 public class DeparturesFragment extends Fragment {

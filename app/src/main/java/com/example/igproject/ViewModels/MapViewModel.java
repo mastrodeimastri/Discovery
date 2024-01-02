@@ -34,7 +34,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -64,11 +69,11 @@ public class MapViewModel extends ViewModel{
     }
 
     private HttpURLConnection setUpConnection() throws IOException {
-            HttpURLConnection result = (HttpURLConnection) new URL(_targetUrl).openConnection();
-            result.setRequestMethod("GET");
-            result.setConnectTimeout(10000);
+        HttpURLConnection result = (HttpURLConnection) new URL(_targetUrl).openConnection();
+        result.setRequestMethod("GET");
+        result.setConnectTimeout(10000);
 
-            return result;
+        return result;
     }
 
     private void doBulkImport(

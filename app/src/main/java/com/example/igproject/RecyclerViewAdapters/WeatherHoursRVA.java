@@ -1,6 +1,6 @@
 package com.example.igproject.RecyclerViewAdapters;
 
-import static com.example.igproject.Fragments.WeatherFragment.getWeatherImage;
+import static com.example.igproject.Fragments.Weather.WeatherFragment.getWeatherImage;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

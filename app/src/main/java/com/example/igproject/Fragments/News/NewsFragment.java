@@ -1,4 +1,4 @@
-package com.example.igproject.Fragments;
+package com.example.igproject.Fragments.News;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

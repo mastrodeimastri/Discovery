@@ -1,4 +1,4 @@
-package com.example.igproject.Fragments;
+package com.example.igproject.Fragments.Profile;
 
 import android.os.Bundle;
 
