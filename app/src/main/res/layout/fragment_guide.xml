@@ -3,10 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.Profile.GuideFragment">
+    tools:context=".Fragments.Profile.Guide.GuideFragment">
     <androidx.viewpager.widget.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/guide"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <ImageSwitcher
+        android:id="@+id/guideSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </FrameLayout>

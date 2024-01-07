@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.igproject.Fragments.Profile.Guide.GuideFragment;
 import com.example.igproject.LocalData.ReportsData;
 import com.example.igproject.R;
 import com.google.firebase.auth.FirebaseAuth;

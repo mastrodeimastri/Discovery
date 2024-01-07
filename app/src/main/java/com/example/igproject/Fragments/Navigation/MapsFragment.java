@@ -105,7 +105,6 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
 
 
                     LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-                    boolean isGSPEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
                     boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
                     if(isNetworkEnabled) {
@@ -135,6 +134,9 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
     @Override
     public void onPause() {
         super.onPause();
+
+        // imposto il flag Modified a true
+        // così quando vado a renderizzare la vista rimango sul punto dove avevo messo in pausa
         Modified = true;
     }
 
@@ -152,9 +154,12 @@ public class MapsFragment extends Fragment implements GoogleMap.OnMarkerClickLis
         super.onViewCreated(view, savedInstanceState);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+
+        // binding del LocationService così da porterlo riusare più avanti
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
     }
 

@@ -1,4 +1,4 @@
-package com.example.igproject.Fragments.Profile;
+package com.example.igproject.Fragments.Profile.Guide;
 
 import android.os.Bundle;
 
@@ -12,18 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.igproject.Fragments.Guide.Pag1Fragment;
-import com.example.igproject.Fragments.Guide.Pag2Fragment;
-import com.example.igproject.Fragments.Guide.Pag3Fragment;
-import com.example.igproject.Fragments.Guide.Pag4Fragment;
-import com.example.igproject.Fragments.Guide.Pag5Fragment;
 import com.example.igproject.R;
 
 
 public class GuideFragment extends Fragment {
 
 
-    ViewPager viewPager;
+    private ViewPager viewPager;
+
+    private Integer size = 28;
 
     public GuideFragment() {
         // Required empty public constructor
@@ -51,7 +48,7 @@ public class GuideFragment extends Fragment {
         viewPager.setAdapter(new GuidePagesAdapter(getChildFragmentManager()));
     }
 
-    public static class GuidePagesAdapter extends FragmentStatePagerAdapter {
+    public class GuidePagesAdapter extends FragmentStatePagerAdapter {
 
         public GuidePagesAdapter(@NonNull FragmentManager fm) {
             super(fm);
@@ -61,31 +58,13 @@ public class GuideFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
 
-            Fragment fragment = null;
-            switch(position) {
-                case 0:
-                    fragment = new Pag1Fragment();
-                    break;
-                case 1:
-                    fragment = new Pag2Fragment();
-                    break;
-                case 2:
-                    fragment = new Pag3Fragment();
-                    break;
-                case 3:
-                    fragment = new Pag4Fragment();
-                    break;
-                case 4:
-                    fragment = new Pag5Fragment();
-                    break;
-            }
 
-            return fragment;
+            return GuidePageFragment.newInstance(position % GuideFragment.this.size);
         }
 
         @Override
         public int getCount() {
-            return 5;
+            return size - 1;
         }
     }
 }
